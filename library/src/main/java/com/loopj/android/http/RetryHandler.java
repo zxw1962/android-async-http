@@ -92,8 +92,6 @@ class RetryHandler implements HttpRequestRetryHandler {
             if (currentReq == null) {
                 return false;
             }
-            String requestType = currentReq.getMethod();
-            retry = !requestType.equals("POST");
         }
 
         if (retry) {
@@ -103,6 +101,14 @@ class RetryHandler implements HttpRequestRetryHandler {
         }
 
         return retry;
+    }
+
+    static void addClassToWhitelist(Class<?> cls) {
+        exceptionWhitelist.add(cls);
+    }
+
+    static void addClassToBlacklist(Class<?> cls) {
+        exceptionBlacklist.add(cls);
     }
 
     protected boolean isInList(HashSet<Class<?>> list, Throwable error) {

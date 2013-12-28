@@ -63,14 +63,14 @@ import org.apache.http.protocol.SyncBasicHttpContext;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.zip.GZIPInputStream;
 
@@ -91,24 +91,24 @@ import java.util.zip.GZIPInputStream;
  * </pre>
  */
 public class AsyncHttpClient {
-    private static final String VERSION = "1.4.4";
 
-    private static final int DEFAULT_MAX_CONNECTIONS = 10;
-    private static final int DEFAULT_SOCKET_TIMEOUT = 10 * 1000;
-    private static final int DEFAULT_MAX_RETRIES = 5;
-    private static final int DEFAULT_RETRY_SLEEP_TIME_MILLIS = 1500;
-    private static final int DEFAULT_SOCKET_BUFFER_SIZE = 8192;
-    private static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
-    private static final String ENCODING_GZIP = "gzip";
-    private static final String LOG_TAG = "AsyncHttpClient";
+    public static final String VERSION = "1.4.5";
+    public static final int DEFAULT_MAX_CONNECTIONS = 10;
+    public static final int DEFAULT_SOCKET_TIMEOUT = 10 * 1000;
+    public static final int DEFAULT_MAX_RETRIES = 5;
+    public static final int DEFAULT_RETRY_SLEEP_TIME_MILLIS = 1500;
+    public static final int DEFAULT_SOCKET_BUFFER_SIZE = 8192;
+    public static final String HEADER_ACCEPT_ENCODING = "Accept-Encoding";
+    public static final String ENCODING_GZIP = "gzip";
+    public static final String LOG_TAG = "AsyncHttpClient";
 
     private int maxConnections = DEFAULT_MAX_CONNECTIONS;
     private int timeout = DEFAULT_SOCKET_TIMEOUT;
 
     private final DefaultHttpClient httpClient;
     private final HttpContext httpContext;
-    private ThreadPoolExecutor threadPool;
-    private final Map<Context, List<WeakReference<Future<?>>>> requestMap;
+    private ExecutorService threadPool;
+    private final Map<Context, List<RequestHandle>> requestMap;
     private final Map<String, String> clientHeaderMap;
     private boolean isUrlEncodingEnabled = true;
 
@@ -209,8 +209,8 @@ public class AsyncHttpClient {
 
         ThreadSafeClientConnManager cm = new ThreadSafeClientConnManager(httpParams, schemeRegistry);
 
-        threadPool = (ThreadPoolExecutor) Executors.newFixedThreadPool(DEFAULT_MAX_CONNECTIONS);
-        requestMap = new WeakHashMap<Context, List<WeakReference<Future<?>>>>();
+        threadPool = Executors.newCachedThreadPool();
+        requestMap = new WeakHashMap<Context, List<RequestHandle>>();
         clientHeaderMap = new HashMap<String, String>();
 
         httpContext = new SyncBasicHttpContext(new BasicHttpContext());
@@ -247,6 +247,18 @@ public class AsyncHttpClient {
         });
 
         httpClient.setHttpRequestRetryHandler(new RetryHandler(DEFAULT_MAX_RETRIES, DEFAULT_RETRY_SLEEP_TIME_MILLIS));
+    }
+
+    public static void allowRetryExceptionClass(Class<?> cls) {
+        if (cls != null) {
+            RetryHandler.addClassToWhitelist(cls);
+        }
+    }
+
+    public static void blockRetryExceptionClass(Class<?> cls) {
+        if (cls != null) {
+            RetryHandler.addClassToBlacklist(cls);
+        }
     }
 
     /**
@@ -475,21 +487,16 @@ public class AsyncHttpClient {
      *                              pending requests.
      */
     public void cancelRequests(Context context, boolean mayInterruptIfRunning) {
-        List<WeakReference<Future<?>>> requestList = requestMap.get(context);
+        List<RequestHandle> requestList = requestMap.get(context);
         if (requestList != null) {
-            for (WeakReference<Future<?>> requestRef : requestList) {
-                Future<?> request = requestRef.get();
-                if (request != null) {
-                    request.cancel(mayInterruptIfRunning);
-                }
+            for (RequestHandle requestHandle : requestList) {
+                requestHandle.cancel(mayInterruptIfRunning);
             }
+            requestMap.remove(context);
         }
-        requestMap.remove(context);
     }
 
-    //
-    // HTTP HEAD Requests
-    //
+    // [+] HTTP HEAD
 
     /**
      * Perform a HTTP HEAD request, without any parameters.
@@ -558,10 +565,8 @@ public class AsyncHttpClient {
                 context);
     }
 
-
-    //
-    // HTTP GET Requests
-    //
+    // [-] HTTP HEAD
+    // [+] HTTP GET
 
     /**
      * Perform a HTTP GET request, without any parameters.
@@ -630,10 +635,8 @@ public class AsyncHttpClient {
                 context);
     }
 
-
-    //
-    // HTTP POST Requests
-    //
+    // [-] HTTP GET
+    // [+] HTTP POST
 
     /**
      * Perform a HTTP POST request, without any parameters.
@@ -732,9 +735,8 @@ public class AsyncHttpClient {
         return sendRequest(httpClient, httpContext, request, contentType, responseHandler, context);
     }
 
-    //
-    // HTTP PUT Requests
-    //
+    // [-] HTTP POST
+    // [+] HTTP PUT
 
     /**
      * Perform a HTTP PUT request, without any parameters.
@@ -811,9 +813,8 @@ public class AsyncHttpClient {
         return sendRequest(httpClient, httpContext, request, contentType, responseHandler, context);
     }
 
-    //
-    // HTTP DELETE Requests
-    //
+    // [-] HTTP PUT
+    // [+] HTTP DELETE
 
     /**
      * Perform a HTTP DELETE request.
@@ -870,6 +871,8 @@ public class AsyncHttpClient {
         return sendRequest(httpClient, httpContext, httpDelete, null, responseHandler, context);
     }
 
+    // [-] HTTP DELETE
+
     /**
      * Puts a new request in queue as a new thread in pool to be executed
      *
@@ -884,28 +887,35 @@ public class AsyncHttpClient {
      */
     protected RequestHandle sendRequest(DefaultHttpClient client, HttpContext httpContext, HttpUriRequest uriRequest, String contentType, ResponseHandlerInterface responseHandler, Context context) {
         if (contentType != null) {
-            uriRequest.addHeader("Content-Type", contentType);
+            uriRequest.setHeader("Content-Type", contentType);
         }
 
         responseHandler.setRequestHeaders(uriRequest.getAllHeaders());
         responseHandler.setRequestURI(uriRequest.getURI());
 
-        Future<?> request = threadPool.submit(new AsyncHttpRequest(client, httpContext, uriRequest, responseHandler));
+        AsyncHttpRequest request = new AsyncHttpRequest(client, httpContext, uriRequest, responseHandler);
+        threadPool.submit(request);
+        RequestHandle requestHandle = new RequestHandle(request);
 
         if (context != null) {
             // Add request to request map
-            List<WeakReference<Future<?>>> requestList = requestMap.get(context);
+            List<RequestHandle> requestList = requestMap.get(context);
             if (requestList == null) {
-                requestList = new LinkedList<WeakReference<Future<?>>>();
+                requestList = new LinkedList<RequestHandle>();
                 requestMap.put(context, requestList);
             }
 
-            requestList.add(new WeakReference<Future<?>>(request));
+            requestList.add(requestHandle);
 
-            // TODO: Remove dead weakrefs from requestLists?
+            Iterator<RequestHandle> iterator = requestList.iterator();
+            while (iterator.hasNext()) {
+                if (iterator.next().shouldBeGarbageCollected()) {
+                    iterator.remove();
+                }
+            }
         }
 
-        return new RequestHandle(request);
+        return requestHandle;
     }
 
     /**

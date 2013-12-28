@@ -12,75 +12,99 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-public class FileAsyncHttpResponseHandler extends AsyncHttpResponseHandler {
+public abstract class FileAsyncHttpResponseHandler extends AsyncHttpResponseHandler {
 
     private File mFile;
     private static final String LOG_TAG = "FileAsyncHttpResponseHandler";
 
+    /**
+     * Obtains new FileAsyncHttpResponseHandler and stores response in passed file
+     *
+     * @param file File to store response within, must not be null
+     */
     public FileAsyncHttpResponseHandler(File file) {
         super();
         assert (file != null);
         this.mFile = file;
     }
 
-    public FileAsyncHttpResponseHandler(Context c) {
+    /**
+     * Obtains new FileAsyncHttpResponseHandler against context with target being temporary file
+     *
+     * @param context Context, must not be null
+     */
+    public FileAsyncHttpResponseHandler(Context context) {
         super();
-        assert (c != null);
-        this.mFile = getTemporaryFile(c);
+        this.mFile = getTemporaryFile(context);
     }
 
-    protected File getTemporaryFile(Context c) {
+    /**
+     * Attempts to delete file with stored response
+     *
+     * @return false if the file does not exist or is null, true if it was successfully deleted
+     */
+    public boolean deleteTargetFile() {
+        return getTargetFile() != null && getTargetFile().delete();
+    }
+
+    /**
+     * Used when there is no file to be used when calling constructor
+     *
+     * @param context Context, must not be null
+     * @return temporary file or null if creating file failed
+     */
+    protected File getTemporaryFile(Context context) {
+        assert (context != null);
         try {
-            return File.createTempFile("temp_", "_handled", c.getCacheDir());
+            return File.createTempFile("temp_", "_handled", context.getCacheDir());
         } catch (Throwable t) {
             Log.e(LOG_TAG, "Cannot create temporary file", t);
         }
         return null;
     }
 
+    /**
+     * Retrieves File object in which the response is stored
+     *
+     * @return File file in which the response is stored
+     */
     protected File getTargetFile() {
         assert (mFile != null);
         return mFile;
     }
 
-    public void onSuccess(File file) {
+    @Override
+    public final void onFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
+        onFailure(statusCode, headers, throwable, getTargetFile());
     }
 
-    public void onSuccess(int statusCode, File file) {
-        onSuccess(file);
-    }
-
-    public void onSuccess(int statusCode, Header[] headers, File file) {
-        onSuccess(statusCode, file);
-    }
-
-    public void onFailure(Throwable e, File response) {
-        // By default call lower chain method
-        onFailure(e);
-    }
-
-    public void onFailure(int statusCode, Throwable e, File response) {
-        // By default call lower chain method
-        onFailure(e, response);
-    }
-
-    public void onFailure(int statusCode, Header[] headers, Throwable e, File response) {
-        // By default call lower chain method
-        onFailure(statusCode, e, response);
-    }
+    /**
+     * Method to be overriden, receives as much of file as possible Called when the file is
+     * considered failure or if there is error when retrieving file
+     *
+     * @param statusCode http file status line
+     * @param headers    file http headers if any
+     * @param throwable  returned throwable
+     * @param file       file in which the file is stored
+     */
+    public abstract void onFailure(int statusCode, Header[] headers, Throwable throwable, File file);
 
     @Override
-    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-        onFailure(statusCode, headers, error, getTargetFile());
-    }
-
-    @Override
-    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+    public final void onSuccess(int statusCode, Header[] headers, byte[] responseBytes) {
         onSuccess(statusCode, headers, getTargetFile());
     }
 
+    /**
+     * Method to be overriden, receives as much of response as possible
+     *
+     * @param statusCode http response status line
+     * @param headers    response http headers if any
+     * @param file       file in which the response is stored
+     */
+    public abstract void onSuccess(int statusCode, Header[] headers, File file);
+
     @Override
-    byte[] getResponseData(HttpEntity entity) throws IOException {
+    protected byte[] getResponseData(HttpEntity entity) throws IOException {
         if (entity != null) {
             InputStream instream = entity.getContent();
             long contentLength = entity.getContentLength();

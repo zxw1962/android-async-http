@@ -30,126 +30,94 @@ import org.json.JSONTokener;
 /**
  * Used to intercept and handle the responses from requests made using {@link AsyncHttpClient}, with
  * automatic parsing into a {@link JSONObject} or {@link JSONArray}. <p>&nbsp;</p> This class is
- * designed to be passed to get, post, put and delete requests with the {@link
- * #onSuccess(JSONObject)} or {@link #onSuccess(JSONArray)} methods anonymously overridden.
- * <p>&nbsp;</p> Additionally, you can override the other event methods from the parent class.
+ * designed to be passed to get, post, put and delete requests with the {@link #onSuccess(int,
+ * org.apache.http.Header[], org.json.JSONArray)} or {@link #onSuccess(int,
+ * org.apache.http.Header[], org.json.JSONObject)} methods anonymously overridden. <p>&nbsp;</p>
+ * Additionally, you can override the other event methods from the parent class.
  */
 public class JsonHttpResponseHandler extends TextHttpResponseHandler {
     private static final String LOG_TAG = "JsonHttpResponseHandler";
 
     /**
-     * Creates a new JsonHttpResponseHandler
+     * Creates new JsonHttpResponseHandler, with Json String encoding UTF-8
      */
-
     public JsonHttpResponseHandler() {
         super(DEFAULT_CHARSET);
     }
 
+    /**
+     * Creates new JsonHttpRespnseHandler with given Json String encoding
+     *
+     * @param encoding String encoding to be used when parsing JSON
+     */
     public JsonHttpResponseHandler(String encoding) {
         super(encoding);
     }
 
-    //
-    // Callbacks to be overridden, typically anonymously
-    //
-
     /**
-     * Fired when a request returns successfully and contains a json object at the base of the
-     * response string. Override to handle in your own code.
+     * Returns when request succeeds
      *
-     * @param response the parsed json object found in the server response (if any)
-     */
-    public void onSuccess(JSONObject response) {
-    }
-
-
-    /**
-     * Fired when a request returns successfully and contains a json array at the base of the
-     * response string. Override to handle in your own code.
-     *
-     * @param response the parsed json array found in the server response (if any)
-     */
-    public void onSuccess(JSONArray response) {
-    }
-
-    /**
-     * Fired when a request returns successfully and contains a json object at the base of the
-     * response string. Override to handle in your own code.
-     *
-     * @param statusCode the status code of the response
-     * @param headers    the headers of the HTTP response
-     * @param response   the parsed json object found in the server response (if any)
+     * @param statusCode http response status line
+     * @param headers    response headers if any
+     * @param response   parsed response if any
      */
     public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
-        onSuccess(statusCode, response);
+
     }
 
     /**
-     * Fired when a request returns successfully and contains a json object at the base of the
-     * response string. Override to handle in your own code.
+     * Returns when request succeeds
      *
-     * @param statusCode the status code of the response
-     * @param response   the parsed json object found in the server response (if any)
-     */
-    public void onSuccess(int statusCode, JSONObject response) {
-        onSuccess(response);
-    }
-
-    /**
-     * Fired when a request returns successfully and contains a json array at the base of the
-     * response string. Override to handle in your own code.
-     *
-     * @param statusCode the status code of the response
-     * @param headers    the headers of the HTTP response
-     * @param response   the parsed json array found in the server response (if any)
+     * @param statusCode http response status line
+     * @param headers    response headers if any
+     * @param response   parsed response if any
      */
     public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-        onSuccess(statusCode, response);
+
     }
 
     /**
-     * Fired when a request returns successfully and contains a json array at the base of the
-     * response string. Override to handle in your own code.
+     * Returns when request failed
      *
-     * @param statusCode the status code of the response
-     * @param response   the parsed json array found in the server response (if any)
+     * @param statusCode    http response status line
+     * @param headers       response headers if any
+     * @param throwable     throwable describing the way request failed
+     * @param errorResponse parsed response if any
      */
-    public void onSuccess(int statusCode, JSONArray response) {
-        onSuccess(response);
+    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+
     }
 
-    public void onFailure(Throwable e, JSONObject errorResponse) {
-        onFailure(e);
-    }
+    /**
+     * Returns when request failed
+     *
+     * @param statusCode    http response status line
+     * @param headers       response headers if any
+     * @param throwable     throwable describing the way request failed
+     * @param errorResponse parsed response if any
+     */
+    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
 
-    public void onFailure(int statusCode, Throwable e, JSONObject errorResponse) {
-        onFailure(e, errorResponse);
-    }
-
-    public void onFailure(int statusCode, Header[] headers, Throwable e, JSONObject errorResponse) {
-        onFailure(statusCode, e, errorResponse);
-    }
-
-    public void onFailure(Throwable e, JSONArray errorResponse) {
-        onFailure(e);
-    }
-
-    public void onFailure(int statusCode, Throwable e, JSONArray errorResponse) {
-        onFailure(e, errorResponse);
-    }
-
-    public void onFailure(int statusCode, Header[] headers, Throwable e, JSONArray errorResponse) {
-        onFailure(statusCode, e, errorResponse);
     }
 
     @Override
-    public void onSuccess(final int statusCode, final Header[] headers, final String responseBody) {
+    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+
+    }
+
+    @Override
+    public void onSuccess(int statusCode, Header[] headers, String responseString) {
+
+    }
+
+    @Override
+    public final void onSuccess(final int statusCode, final Header[] headers, final byte[] responseBytes) {
         if (statusCode != HttpStatus.SC_NO_CONTENT) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        final Object jsonResponse = parseResponse(responseBody);
+                        final Object jsonResponse = parseResponse(responseBytes);
                         postRunnable(new Runnable() {
                             @Override
                             public void run() {
@@ -157,10 +125,8 @@ public class JsonHttpResponseHandler extends TextHttpResponseHandler {
                                     onSuccess(statusCode, headers, (JSONObject) jsonResponse);
                                 } else if (jsonResponse instanceof JSONArray) {
                                     onSuccess(statusCode, headers, (JSONArray) jsonResponse);
-                                } else if (jsonResponse instanceof String) {
-                                    onSuccess(statusCode, headers, (String) jsonResponse);
                                 } else {
-                                    onFailure(new JSONException("Unexpected type " + jsonResponse.getClass().getName()), (JSONObject) null);
+                                    onFailure(statusCode, headers, new JSONException("Unexpected response type " + jsonResponse.getClass().getName()), (JSONObject) null);
                                 }
 
                             }
@@ -169,7 +135,7 @@ public class JsonHttpResponseHandler extends TextHttpResponseHandler {
                         postRunnable(new Runnable() {
                             @Override
                             public void run() {
-                                onFailure(ex, (JSONObject) null);
+                                onFailure(statusCode, headers, ex, (JSONObject) null);
                             }
                         });
                     }
@@ -181,24 +147,24 @@ public class JsonHttpResponseHandler extends TextHttpResponseHandler {
     }
 
     @Override
-    public void onFailure(final int statusCode, final Header[] headers, final String responseBody, final Throwable e) {
-        if (responseBody != null) {
+    public final void onFailure(final int statusCode, final Header[] headers, final byte[] responseBytes, final Throwable throwable) {
+        if (responseBytes != null) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        final Object jsonResponse = parseResponse(responseBody);
+                        final Object jsonResponse = parseResponse(responseBytes);
                         postRunnable(new Runnable() {
                             @Override
                             public void run() {
                                 if (jsonResponse instanceof JSONObject) {
-                                    onFailure(statusCode, headers, e, (JSONObject) jsonResponse);
+                                    onFailure(statusCode, headers, throwable, (JSONObject) jsonResponse);
                                 } else if (jsonResponse instanceof JSONArray) {
-                                    onFailure(statusCode, headers, e, (JSONArray) jsonResponse);
+                                    onFailure(statusCode, headers, throwable, (JSONArray) jsonResponse);
                                 } else if (jsonResponse instanceof String) {
-                                    onFailure(statusCode, headers, e, (String) jsonResponse);
+                                    onFailure(statusCode, headers, (String) jsonResponse, throwable);
                                 } else {
-                                    onFailure(new JSONException("Unexpected type " + jsonResponse.getClass().getName()), (JSONObject) null);
+                                    onFailure(statusCode, headers, new JSONException("Unexpected response type " + jsonResponse.getClass().getName()), (JSONObject) null);
                                 }
                             }
                         });
@@ -216,18 +182,29 @@ public class JsonHttpResponseHandler extends TextHttpResponseHandler {
             }).start();
         } else {
             Log.v(LOG_TAG, "response body is null, calling onFailure(Throwable, JSONObject)");
-            onFailure(statusCode, headers, e, (JSONObject) null);
+            onFailure(statusCode, headers, throwable, (JSONObject) null);
         }
     }
 
-    protected Object parseResponse(String responseBody) throws JSONException {
+    /**
+     * Returns Object of type {@link JSONObject}, {@link JSONArray}, String, Boolean, Integer, Long,
+     * Double or {@link JSONObject#NULL}, see {@link org.json.JSONTokener#nextValue()}
+     *
+     * @param responseBody response bytes to be assembled in String and parsed as JSON
+     * @return Object parsedResponse
+     * @throws org.json.JSONException exception if thrown while parsing JSON
+     */
+    protected Object parseResponse(byte[] responseBody) throws JSONException {
         if (null == responseBody)
             return null;
         Object result = null;
         //trim the string to prevent start with blank, and test if the string is valid JSON, because the parser don't do this :(. If Json is not valid this will return null
-        String jsonString = responseBody.trim();
-        if (jsonString.startsWith("{") || jsonString.startsWith("[")) {
-            result = new JSONTokener(jsonString).nextValue();
+        String jsonString = getResponseString(responseBody, getCharset());
+        if (jsonString != null) {
+            jsonString = jsonString.trim();
+            if (jsonString.startsWith("{") || jsonString.startsWith("[")) {
+                result = new JSONTokener(jsonString).nextValue();
+            }
         }
         if (result == null) {
             result = jsonString;

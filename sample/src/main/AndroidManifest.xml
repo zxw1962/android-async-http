@@ -7,8 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET"/>
 
     <uses-sdk
-        android:minSdkVersion="3"
-        android:targetSdkVersion="18" />
+        android:minSdkVersion="3" />
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -27,6 +26,7 @@
         <activity android:name=".JsonSample" />
         <activity android:name=".FileSample" />
         <activity android:name=".BinarySample" />
+        <activity android:name=".ThreadingTimeoutSample" />
     </application>
 
 </manifest>

@@ -18,6 +18,8 @@
 
 package com.loopj.android.http;
 
+import android.util.Log;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.utils.URLEncodedUtils;
@@ -25,6 +27,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,7 +72,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * String[] colors = { "blue", "yellow" }; // Ordered collection
  * params.put("colors", colors); // url params: "colors[]=blue&amp;colors[]=yellow"
  *
- * List&lt;Map&lt;String, String&gt;&gt; listOfMaps = new ArrayList&lt;Map&lt;String, String&gt;&gt;();
+ * List&lt;Map&lt;String, String&gt;&gt; listOfMaps = new ArrayList&lt;Map&lt;String,
+ * String&gt;&gt;();
  * Map&lt;String, String&gt; user1 = new HashMap&lt;String, String&gt;();
  * user1.put("age", "30");
  * user1.put("gender", "male");
@@ -86,11 +90,27 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RequestParams {
 
-    protected boolean isRepeatable = false;
+    protected final static String LOG_TAG = "RequestParams";
+    protected boolean isRepeatable;
+    protected boolean useJsonStreamer;
     protected ConcurrentHashMap<String, String> urlParams;
     protected ConcurrentHashMap<String, StreamWrapper> streamParams;
     protected ConcurrentHashMap<String, FileWrapper> fileParams;
     protected ConcurrentHashMap<String, Object> urlParamsWithObjects;
+    protected String contentEncoding = HTTP.UTF_8;
+
+    /**
+     * Sets content encoding for return value of {@link #getParamString()} and {@link
+     * #createFormEntity()} <p>&nbsp;</p> Default encoding is "UTF-8"
+     *
+     * @param encoding String constant from {@link org.apache.http.protocol.HTTP}
+     */
+    public void setContentEncoding(final String encoding) {
+        if (encoding != null)
+            this.contentEncoding = encoding;
+        else
+            Log.d(LOG_TAG, "setContentEncoding called with null attribute");
+    }
 
     /**
      * Constructs a new empty {@code RequestParams} instance.
@@ -179,7 +199,10 @@ public class RequestParams {
      * @throws java.io.FileNotFoundException throws if wrong File argument was passed
      */
     public void put(String key, File file, String contentType) throws FileNotFoundException {
-        if (key != null && file != null) {
+        if (file == null || !file.exists()) {
+            throw new FileNotFoundException();
+        }
+        if (key != null) {
             fileParams.put(key, new FileWrapper(file, contentType));
         }
     }
@@ -312,6 +335,10 @@ public class RequestParams {
         this.isRepeatable = isRepeatable;
     }
 
+    public void setUseJsonStreamer(boolean useJsonStreamer) {
+        this.useJsonStreamer = useJsonStreamer;
+    }
+
     /**
      * Returns an HttpEntity containing all request parameters
      *
@@ -321,18 +348,57 @@ public class RequestParams {
      * @throws IOException if one of the streams cannot be read
      */
     public HttpEntity getEntity(ResponseHandlerInterface progressHandler) throws IOException {
-        if (streamParams.isEmpty() && fileParams.isEmpty()) {
+        if (useJsonStreamer) {
+            return createJsonStreamerEntity();
+        } else if (streamParams.isEmpty() && fileParams.isEmpty()) {
             return createFormEntity();
         } else {
             return createMultipartEntity(progressHandler);
         }
     }
 
+    private HttpEntity createJsonStreamerEntity() throws IOException {
+        JsonStreamerEntity entity = new JsonStreamerEntity(!fileParams.isEmpty() || !streamParams.isEmpty());
+
+        // Add string params
+        for (ConcurrentHashMap.Entry<String, String> entry : urlParams.entrySet()) {
+            entity.addPart(entry.getKey(), entry.getValue());
+        }
+
+        // Add non-string params
+        for (ConcurrentHashMap.Entry<String, Object> entry : urlParamsWithObjects.entrySet()) {
+            entity.addPart(entry.getKey(), entry.getValue());
+        }
+
+        // Add file params
+        for (ConcurrentHashMap.Entry<String, FileWrapper> entry : fileParams.entrySet()) {
+            FileWrapper fileWrapper = entry.getValue();
+            entity.addPart(entry.getKey(),
+                    new FileInputStream(fileWrapper.file),
+                    fileWrapper.file.getName(),
+                    fileWrapper.contentType);
+        }
+
+        // Add stream params
+        for (ConcurrentHashMap.Entry<String, StreamWrapper> entry : streamParams.entrySet()) {
+            StreamWrapper stream = entry.getValue();
+            if (stream.inputStream != null) {
+                entity.addPart(entry.getKey(),
+                        stream.inputStream,
+                        stream.name,
+                        stream.contentType);
+            }
+        }
+
+        return entity;
+    }
+
     private HttpEntity createFormEntity() {
         try {
-            return new UrlEncodedFormEntity(getParamsList(), HTTP.UTF_8);
+            return new UrlEncodedFormEntity(getParamsList(), contentEncoding);
         } catch (UnsupportedEncodingException e) {
-            return null; // Actually cannot happen when using utf-8
+            Log.e(LOG_TAG, "createFormEntity failed", e);
+            return null; // Can happen, if the 'contentEncoding' won't be HTTP.UTF_8
         }
     }
 
@@ -424,10 +490,10 @@ public class RequestParams {
     }
 
     protected String getParamString() {
-        return URLEncodedUtils.format(getParamsList(), HTTP.UTF_8);
+        return URLEncodedUtils.format(getParamsList(), contentEncoding);
     }
 
-    private static class FileWrapper {
+    public static class FileWrapper {
         public File file;
         public String contentType;
 
@@ -437,7 +503,7 @@ public class RequestParams {
         }
     }
 
-    private static class StreamWrapper {
+    public static class StreamWrapper {
         public InputStream inputStream;
         public String name;
         public String contentType;
