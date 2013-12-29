@@ -2,21 +2,15 @@ apply plugin: 'android-library'
 
 android {
     compileSdkVersion 19
-    buildToolsVersion '19.0.0'
+    buildToolsVersion '19.0.1'
     
     lintOptions {
         abortOnError false
     }
 }
 
-repositories {
-    maven {
-        url "https://oss.sonatype.org/content/repositories/snapshots/"
-    }
-}
-
 dependencies {
-    compile 'com.squareup.okhttp:okhttp:1.3-SNAPSHOT'
+    compile 'com.squareup.okhttp:okhttp:1.2.2-SNAPSHOT'
 }
 
 android.libraryVariants.all { variant ->
