@@ -18,6 +18,9 @@ android {
     defaultConfig {
         minSdkVersion 3
         targetSdkVersion 19
+        versionCode Integer.parseInt(VERSION_CODE)
+        versionName VERSION_NAME
+        packageName GROUP + '.http'
     }
     
     lintOptions {
