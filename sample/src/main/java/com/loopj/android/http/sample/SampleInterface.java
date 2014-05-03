@@ -2,7 +2,7 @@ package com.loopj.android.http.sample;
 
 import com.loopj.android.http.interfaces.IAsyncHttpClient;
 import com.loopj.android.http.interfaces.IRequestHandle;
-import com.loopj.android.http.interfaces.ResponseHandlerInterface;
+import com.loopj.android.http.interfaces.IResponseHandler;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -27,7 +27,7 @@ public interface SampleInterface {
 
     void setAsyncHttpClient(IAsyncHttpClient client);
 
-    ResponseHandlerInterface getResponseHandler();
+    IResponseHandler getResponseHandler();
 
     String getDefaultURL();
 
@@ -39,5 +39,5 @@ public interface SampleInterface {
 
     boolean isCancelButtonAllowed();
 
-    IRequestHandle executeSample(IAsyncHttpClient client, String URL, Header[] headers, HttpEntity entity, ResponseHandlerInterface responseHandler);
+    IRequestHandle executeSample(IAsyncHttpClient client, String URL, Header[] headers, HttpEntity entity, IResponseHandler responseHandler);
 }

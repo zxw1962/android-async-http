@@ -9,7 +9,7 @@ import com.loopj.android.http.impl.RequestHandle;
 import com.loopj.android.http.interfaces.IAsyncHttpClientOptions;
 import com.loopj.android.http.interfaces.IRequestHandle;
 import com.loopj.android.http.interfaces.IRequestParams;
-import com.loopj.android.http.interfaces.ResponseHandlerInterface;
+import com.loopj.android.http.interfaces.IResponseHandler;
 
 import org.apache.http.Header;
 import org.apache.http.client.methods.HttpDeleteHC4;
@@ -37,63 +37,63 @@ public class AsyncHttpClient extends AbstractAsyncHttpClient {
 
     @NotNull
     @Override
-    public IRequestHandle head(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable ResponseHandlerInterface responseHandler) {
+    public IRequestHandle head(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable IResponseHandler responseHandler) {
         RequestBuilder uriRequestBuilder = createRequestBuilder(HttpHeadHC4.METHOD_NAME, url, headers);
         return execute(context, uriRequestBuilder, responseHandler);
     }
 
     @NotNull
     @Override
-    public IRequestHandle post(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable ResponseHandlerInterface responseHandler) {
+    public IRequestHandle post(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable IResponseHandler responseHandler) {
         RequestBuilder uriRequestBuilder = createRequestBuilder(HttpPostHC4.METHOD_NAME, url, headers);
         return execute(context, uriRequestBuilder, responseHandler);
     }
 
     @NotNull
     @Override
-    public IRequestHandle get(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable ResponseHandlerInterface responseHandler) {
+    public IRequestHandle get(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable IResponseHandler responseHandler) {
         RequestBuilder uriRequestBuilder = createRequestBuilder(HttpGetHC4.METHOD_NAME, url, headers);
         return execute(context, uriRequestBuilder, responseHandler);
     }
 
     @NotNull
     @Override
-    public IRequestHandle delete(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable ResponseHandlerInterface responseHandler) {
+    public IRequestHandle delete(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable IResponseHandler responseHandler) {
         RequestBuilder uriRequestBuilder = createRequestBuilder(HttpDeleteHC4.METHOD_NAME, url, headers);
         return execute(context, uriRequestBuilder, responseHandler);
     }
 
     @NotNull
     @Override
-    public IRequestHandle options(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable ResponseHandlerInterface responseHandler) {
+    public IRequestHandle options(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable IResponseHandler responseHandler) {
         RequestBuilder uriRequestBuilder = createRequestBuilder(HttpOptionsHC4.METHOD_NAME, url, headers);
         return execute(context, uriRequestBuilder, responseHandler);
     }
 
     @NotNull
     @Override
-    public IRequestHandle patch(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable ResponseHandlerInterface responseHandler) {
+    public IRequestHandle patch(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable IResponseHandler responseHandler) {
         RequestBuilder uriRequestBuilder = createRequestBuilder(HttpPatch.METHOD_NAME, url, headers);
         return execute(context, uriRequestBuilder, responseHandler);
     }
 
     @NotNull
     @Override
-    public IRequestHandle put(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable ResponseHandlerInterface responseHandler) {
+    public IRequestHandle put(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable IResponseHandler responseHandler) {
         RequestBuilder uriRequestBuilder = createRequestBuilder(HttpPutHC4.METHOD_NAME, url, headers);
         return execute(context, uriRequestBuilder, responseHandler);
     }
 
     @NotNull
     @Override
-    public IRequestHandle trace(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable ResponseHandlerInterface responseHandler) {
+    public IRequestHandle trace(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable IResponseHandler responseHandler) {
         RequestBuilder uriRequestBuilder = createRequestBuilder(HttpTraceHC4.METHOD_NAME, url, headers);
         return execute(context, uriRequestBuilder, responseHandler);
     }
 
     @NotNull
     @Override
-    public IRequestHandle execute(@NotNull Context context, @NotNull RequestBuilder request, @Nullable ResponseHandlerInterface responseHandler) {
+    public IRequestHandle execute(@NotNull Context context, @NotNull RequestBuilder request, @Nullable IResponseHandler responseHandler) {
 
         HttpUriRequest uriRequest = request.build();
 

@@ -2,10 +2,10 @@ package com.loopj.android.http.sample;
 
 import android.util.SparseArray;
 
-import com.loopj.android.http.handlers.AsyncHttpResponseHandler;
+import com.loopj.android.http.handlers.AsyncHttpIResponseHandler;
 import com.loopj.android.http.interfaces.IAsyncHttpClient;
 import com.loopj.android.http.interfaces.IRequestHandle;
-import com.loopj.android.http.interfaces.ResponseHandlerInterface;
+import com.loopj.android.http.interfaces.IResponseHandler;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -51,8 +51,8 @@ public class ThreadingTimeoutSample extends SampleParentActivity {
     }
 
     @Override
-    public ResponseHandlerInterface getResponseHandler() {
-        return new AsyncHttpResponseHandler() {
+    public IResponseHandler getResponseHandler() {
+        return new AsyncHttpIResponseHandler() {
 
             private int id = counter++;
 
@@ -88,7 +88,7 @@ public class ThreadingTimeoutSample extends SampleParentActivity {
     }
 
     @Override
-    public IRequestHandle executeSample(IAsyncHttpClient client, String URL, Header[] headers, HttpEntity entity, ResponseHandlerInterface responseHandler) {
+    public IRequestHandle executeSample(IAsyncHttpClient client, String URL, Header[] headers, HttpEntity entity, IResponseHandler responseHandler) {
         return client.get(this, URL, headers, null, responseHandler);
     }
 }

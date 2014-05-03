@@ -37,13 +37,13 @@ import java.io.UnsupportedEncodingException;
  * });
  * </pre>
  */
-public abstract class TextHttpResponseHandler extends AsyncHttpResponseHandler {
+public abstract class TextHttpIResponseHandler extends AsyncHttpIResponseHandler {
     private static final String LOG_TAG = "TextHttpResponseHandler";
 
     /**
      * Creates new instance with default UTF-8 encoding
      */
-    public TextHttpResponseHandler() {
+    public TextHttpIResponseHandler() {
         this(DEFAULT_CHARSET);
     }
 
@@ -52,7 +52,7 @@ public abstract class TextHttpResponseHandler extends AsyncHttpResponseHandler {
      *
      * @param encoding String encoding, see {@link #setCharset(String)}
      */
-    public TextHttpResponseHandler(String encoding) {
+    public TextHttpIResponseHandler(String encoding) {
         super();
         setCharset(encoding);
     }

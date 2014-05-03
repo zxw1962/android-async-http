@@ -23,7 +23,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 
-import com.loopj.android.http.interfaces.ResponseHandlerInterface;
+import com.loopj.android.http.interfaces.IResponseHandler;
 import com.loopj.android.http.util.IOUtil;
 
 import org.apache.http.Header;
@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-public abstract class AsyncHttpResponseHandler implements ResponseHandlerInterface {
+public abstract class AsyncHttpIResponseHandler implements IResponseHandler {
     private static final String LOG_TAG = "AsyncHttpResponseHandler";
 
     protected static final int SUCCESS_MESSAGE = 0;
@@ -82,9 +82,9 @@ public abstract class AsyncHttpResponseHandler implements ResponseHandlerInterfa
      * Avoid leaks by using a non-anonymous handler class.
      */
     private static class ResponderHandler extends Handler {
-        private final AsyncHttpResponseHandler mResponder;
+        private final AsyncHttpIResponseHandler mResponder;
 
-        ResponderHandler(AsyncHttpResponseHandler mResponder) {
+        ResponderHandler(AsyncHttpIResponseHandler mResponder) {
             this.mResponder = mResponder;
         }
 
@@ -136,7 +136,7 @@ public abstract class AsyncHttpResponseHandler implements ResponseHandlerInterfa
     /**
      * Creates a new AsyncHttpResponseHandler
      */
-    public AsyncHttpResponseHandler() {
+    public AsyncHttpIResponseHandler() {
         // Use asynchronous mode by default.
         setUseSynchronousMode(false);
     }

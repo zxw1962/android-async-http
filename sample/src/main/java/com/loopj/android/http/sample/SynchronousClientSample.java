@@ -4,11 +4,11 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.handlers.AsyncHttpResponseHandler;
+import com.loopj.android.http.handlers.AsyncHttpIResponseHandler;
 import com.loopj.android.http.impl.AsyncHttpClientOptions;
 import com.loopj.android.http.interfaces.IAsyncHttpClient;
 import com.loopj.android.http.interfaces.IRequestHandle;
-import com.loopj.android.http.interfaces.ResponseHandlerInterface;
+import com.loopj.android.http.interfaces.IResponseHandler;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -43,7 +43,7 @@ public class SynchronousClientSample extends GetSample {
     }
 
     @Override
-    public IRequestHandle executeSample(final IAsyncHttpClient client, final String URL, final Header[] headers, HttpEntity entity, final ResponseHandlerInterface responseHandler) {
+    public IRequestHandle executeSample(final IAsyncHttpClient client, final String URL, final Header[] headers, HttpEntity entity, final IResponseHandler responseHandler) {
         if (client.isSynchronous()) {
             new Thread(new Runnable() {
                 @Override
@@ -65,8 +65,8 @@ public class SynchronousClientSample extends GetSample {
     }
 
     @Override
-    public ResponseHandlerInterface getResponseHandler() {
-        return new AsyncHttpResponseHandler() {
+    public IResponseHandler getResponseHandler() {
+        return new AsyncHttpIResponseHandler() {
 
             @Override
             public void onStart() {

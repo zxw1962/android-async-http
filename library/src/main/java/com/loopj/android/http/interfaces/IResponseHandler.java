@@ -9,7 +9,7 @@ import java.net.URI;
 /**
  * Interface to standardize implementations
  */
-public interface ResponseHandlerInterface {
+public interface IResponseHandler {
 
     /**
      * Returns data whether request completed successfully

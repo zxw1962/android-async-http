@@ -26,8 +26,7 @@ package com.loopj.android.http.util;
 import android.util.Log;
 
 import com.loopj.android.http.impl.RequestParams;
-import com.loopj.android.http.interfaces.ResponseHandlerInterface;
-import com.loopj.android.http.util.IOUtil;
+import com.loopj.android.http.interfaces.IResponseHandler;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -69,13 +68,13 @@ public class SimpleMultipartEntity implements HttpEntity {
     // boundary
     private final ByteArrayOutputStream out = new ByteArrayOutputStream();
 
-    private final ResponseHandlerInterface progressHandler;
+    private final IResponseHandler progressHandler;
 
     private int bytesWritten;
 
     private int totalSize;
 
-    public SimpleMultipartEntity(ResponseHandlerInterface progressHandler) {
+    public SimpleMultipartEntity(IResponseHandler progressHandler) {
         final StringBuilder buf = new StringBuilder();
         final Random rand = new Random();
         for (int i = 0; i < 30; i++) {

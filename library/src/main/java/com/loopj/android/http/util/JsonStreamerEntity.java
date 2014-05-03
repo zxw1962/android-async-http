@@ -21,8 +21,7 @@ package com.loopj.android.http.util;
 import android.util.Log;
 
 import com.loopj.android.http.impl.RequestParams;
-import com.loopj.android.http.interfaces.ResponseHandlerInterface;
-import com.loopj.android.http.util.IOUtil;
+import com.loopj.android.http.interfaces.IResponseHandler;
 import com.loopj.android.http.util.base64.Base64;
 import com.loopj.android.http.util.base64.Base64OutputStream;
 
@@ -82,9 +81,9 @@ public class JsonStreamerEntity implements HttpEntity {
     // Whether to use gzip compression while uploading
     private final Header contentEncoding;
 
-    private final ResponseHandlerInterface progressHandler;
+    private final IResponseHandler progressHandler;
 
-    public JsonStreamerEntity(ResponseHandlerInterface progressHandler, boolean useGZipCompression) {
+    public JsonStreamerEntity(IResponseHandler progressHandler, boolean useGZipCompression) {
         this.progressHandler = progressHandler;
         this.contentEncoding = useGZipCompression ? HEADER_GZIP_ENCODING : null;
     }

@@ -23,7 +23,7 @@ import android.util.Log;
 import com.loopj.android.http.util.JsonStreamerEntity;
 import com.loopj.android.http.util.SimpleMultipartEntity;
 import com.loopj.android.http.interfaces.IRequestParams;
-import com.loopj.android.http.interfaces.ResponseHandlerInterface;
+import com.loopj.android.http.interfaces.IResponseHandler;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -402,7 +402,7 @@ public class RequestParams implements IRequestParams {
      * org.apache.http.client.methods.HttpEntityEnclosingRequestBase}
      * @throws IOException if one of the streams cannot be read
      */
-    public HttpEntity getEntity(ResponseHandlerInterface progressHandler) throws IOException {
+    public HttpEntity getEntity(IResponseHandler progressHandler) throws IOException {
         if (useJsonStreamer) {
             return createJsonStreamerEntity(progressHandler);
         } else if (streamParams.isEmpty() && fileParams.isEmpty()) {
@@ -412,7 +412,7 @@ public class RequestParams implements IRequestParams {
         }
     }
 
-    private HttpEntity createJsonStreamerEntity(ResponseHandlerInterface progressHandler) throws IOException {
+    private HttpEntity createJsonStreamerEntity(IResponseHandler progressHandler) throws IOException {
         JsonStreamerEntity entity = new JsonStreamerEntity(progressHandler,
                 !fileParams.isEmpty() || !streamParams.isEmpty());
 
@@ -457,7 +457,7 @@ public class RequestParams implements IRequestParams {
         }
     }
 
-    private HttpEntity createMultipartEntity(ResponseHandlerInterface progressHandler) throws IOException {
+    private HttpEntity createMultipartEntity(IResponseHandler progressHandler) throws IOException {
         SimpleMultipartEntity entity = new SimpleMultipartEntity(progressHandler);
         entity.setIsRepeatable(isRepeatable);
 

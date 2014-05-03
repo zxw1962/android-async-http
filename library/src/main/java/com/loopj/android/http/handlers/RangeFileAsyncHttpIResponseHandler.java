@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-public abstract class RangeFileAsyncHttpResponseHandler extends FileAsyncHttpResponseHandler {
+public abstract class RangeFileAsyncHttpIResponseHandler extends FileAsyncHttpIResponseHandler {
 	private static final String LOG_TAG = "RangeFileAsyncHttpResponseHandler";
 
 	private long current = 0;
@@ -26,7 +26,7 @@ public abstract class RangeFileAsyncHttpResponseHandler extends FileAsyncHttpRes
 	 * 
 	 * @param file File to store response within, must not be null
 	 */
-	public RangeFileAsyncHttpResponseHandler(File file) {
+	public RangeFileAsyncHttpIResponseHandler(File file) {
 		super(file);
 	}
 

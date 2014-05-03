@@ -20,7 +20,7 @@ package com.loopj.android.http.core;
 
 import android.util.Log;
 
-import com.loopj.android.http.interfaces.ResponseHandlerInterface;
+import com.loopj.android.http.interfaces.IResponseHandler;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -35,13 +35,13 @@ import java.net.MalformedURLException;
 public class AsyncHttpRequest implements Runnable {
     private final CloseableHttpClient client;
     private final HttpUriRequest request;
-    private final ResponseHandlerInterface responseHandler;
+    private final IResponseHandler responseHandler;
 //    private int executionCount;
     private boolean isCancelled = false;
     private boolean cancelIsNotified = false;
     private boolean isFinished = false;
 
-    public AsyncHttpRequest(CloseableHttpClient client, HttpUriRequest request, ResponseHandlerInterface responseHandler) {
+    public AsyncHttpRequest(CloseableHttpClient client, HttpUriRequest request, IResponseHandler responseHandler) {
         this.client = client;
         this.request = request;
         this.responseHandler = responseHandler;

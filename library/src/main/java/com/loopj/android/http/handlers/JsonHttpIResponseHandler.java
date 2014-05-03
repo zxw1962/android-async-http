@@ -35,13 +35,13 @@ import org.json.JSONTokener;
  * #onSuccess(int, org.apache.http.Header[], org.json.JSONObject)} methods anonymously overridden.
  * <p>&nbsp;</p> Additionally, you can override the other event methods from the parent class.
  */
-public class JsonHttpResponseHandler extends TextHttpResponseHandler {
+public class JsonHttpIResponseHandler extends TextHttpIResponseHandler {
     private static final String LOG_TAG = "JsonHttpResponseHandler";
 
     /**
      * Creates new JsonHttpResponseHandler, with Json String encoding UTF-8
      */
-    public JsonHttpResponseHandler() {
+    public JsonHttpIResponseHandler() {
         super(DEFAULT_CHARSET);
     }
 
@@ -50,7 +50,7 @@ public class JsonHttpResponseHandler extends TextHttpResponseHandler {
      *
      * @param encoding String encoding to be used when parsing JSON
      */
-    public JsonHttpResponseHandler(String encoding) {
+    public JsonHttpIResponseHandler(String encoding) {
         super(encoding);
     }
 
