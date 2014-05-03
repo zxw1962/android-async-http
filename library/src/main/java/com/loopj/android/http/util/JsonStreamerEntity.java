@@ -20,7 +20,6 @@ package com.loopj.android.http.util;
 
 import android.util.Log;
 
-import com.loopj.android.http.impl.RequestParams;
 import com.loopj.android.http.interfaces.IResponseHandler;
 import com.loopj.android.http.util.base64.Base64;
 import com.loopj.android.http.util.base64.Base64OutputStream;
@@ -175,18 +174,18 @@ public class JsonStreamerEntity implements HttpEntity {
             os.write(':');
 
             // Check if this is a FileWrapper.
-            isFileWrapper = value instanceof RequestParams.FileWrapper;
+            isFileWrapper = value instanceof FileWrapper;
 
             // If a file should be uploaded.
-            if (isFileWrapper || value instanceof RequestParams.StreamWrapper) {
+            if (isFileWrapper || value instanceof StreamWrapper) {
                 // All uploads are sent as an object containing the file's details.
                 os.write('{');
 
                 // Determine how to handle this entry.
                 if (isFileWrapper) {
-                    writeToFromFile(os, (RequestParams.FileWrapper)value);
+                    writeToFromFile(os, (FileWrapper)value);
                 } else {
-                    writeToFromStream(os, (RequestParams.StreamWrapper)value);
+                    writeToFromStream(os, (StreamWrapper)value);
                 }
 
                 // End the file's object and prepare for next one.
@@ -223,7 +222,7 @@ public class JsonStreamerEntity implements HttpEntity {
         IOUtil.silentCloseOutputStream(os);
     }
 
-    private void writeToFromStream(OutputStream os, RequestParams.StreamWrapper entry)
+    private void writeToFromStream(OutputStream os, StreamWrapper entry)
             throws IOException {
 
         // Send the meta data.
@@ -253,7 +252,7 @@ public class JsonStreamerEntity implements HttpEntity {
         }
     }
 
-    private void writeToFromFile(OutputStream os, RequestParams.FileWrapper wrapper)
+    private void writeToFromFile(OutputStream os, FileWrapper wrapper)
             throws IOException {
 
         // Send the meta data.

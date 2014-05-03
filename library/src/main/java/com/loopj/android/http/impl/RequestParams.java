@@ -20,10 +20,12 @@ package com.loopj.android.http.impl;
 
 import android.util.Log;
 
-import com.loopj.android.http.util.JsonStreamerEntity;
-import com.loopj.android.http.util.SimpleMultipartEntity;
 import com.loopj.android.http.interfaces.IRequestParams;
 import com.loopj.android.http.interfaces.IResponseHandler;
+import com.loopj.android.http.util.FileWrapper;
+import com.loopj.android.http.util.JsonStreamerEntity;
+import com.loopj.android.http.util.SimpleMultipartEntity;
+import com.loopj.android.http.util.StreamWrapper;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -31,6 +33,7 @@ import org.apache.http.client.utils.URLEncodedUtils;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -96,9 +99,6 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RequestParams implements IRequestParams {
 
-    public final static String APPLICATION_OCTET_STREAM =
-            "application/octet-stream";
-
     protected final static String LOG_TAG = "RequestParams";
     protected boolean isRepeatable;
     protected boolean useJsonStreamer;
@@ -115,11 +115,13 @@ public class RequestParams implements IRequestParams {
      *
      * @param encoding String constant from {@link org.apache.http.protocol.HTTP}
      */
-    public void setContentEncoding(@NotNull final String encoding) {
+    @Override
+    public IRequestParams setContentEncoding(@NotNull final String encoding) {
         if (encoding != null)
             this.contentEncoding = encoding;
         else
             Log.d(LOG_TAG, "setContentEncoding called with null attribute");
+        return this;
     }
 
     /**
@@ -181,10 +183,12 @@ public class RequestParams implements IRequestParams {
      * @param key   the key name for the new param.
      * @param value the value string for the new param.
      */
-    public void put(@NotNull String key, @NotNull String value) {
+    @Override
+    public IRequestParams put(@NotNull String key, @NotNull String value) {
         if (key != null && value != null) {
             urlParams.put(key, value);
         }
+        return this;
     }
 
     /**
@@ -194,8 +198,10 @@ public class RequestParams implements IRequestParams {
      * @param file the file to add.
      * @throws java.io.FileNotFoundException throws if wrong File argument was passed
      */
-    public void put(@NotNull String key, @NotNull File file) throws FileNotFoundException {
+    @Override
+    public IRequestParams put(@NotNull String key, @NotNull File file) throws FileNotFoundException {
         put(key, file, null);
+        return this;
     }
 
     /**
@@ -206,13 +212,15 @@ public class RequestParams implements IRequestParams {
      * @param contentType the content type of the file, eg. application/json
      * @throws java.io.FileNotFoundException throws if wrong File argument was passed
      */
-    public void put(@NotNull String key, @NotNull File file, @NotNull String contentType) throws FileNotFoundException {
+    @Override
+    public IRequestParams put(@NotNull String key, @NotNull File file, @NotNull String contentType) throws FileNotFoundException {
         if (file == null || !file.exists()) {
             throw new FileNotFoundException();
         }
         if (key != null) {
             fileParams.put(key, new FileWrapper(file, contentType));
         }
+        return this;
     }
 
     /**
@@ -221,8 +229,9 @@ public class RequestParams implements IRequestParams {
      * @param key    the key name for the new param.
      * @param stream the input stream to add.
      */
-    public void put(@NotNull String key, @NotNull InputStream stream) {
-        put(key, stream, null);
+    @Override
+    public IRequestParams put(@NotNull String key, @NotNull InputStream stream) {
+        return put(key, stream, null);
     }
 
     /**
@@ -232,8 +241,9 @@ public class RequestParams implements IRequestParams {
      * @param stream the input stream to add.
      * @param name   the name of the stream.
      */
-    public void put(@NotNull String key, @NotNull InputStream stream, @NotNull String name) {
-        put(key, stream, name, null);
+    @Override
+    public IRequestParams put(@NotNull String key, @NotNull InputStream stream, @NotNull String name) {
+        return put(key, stream, name, null);
     }
 
     /**
@@ -244,8 +254,9 @@ public class RequestParams implements IRequestParams {
      * @param name        the name of the stream.
      * @param contentType the content type of the file, eg. application/json
      */
-    public void put(@NotNull String key, @NotNull InputStream stream, @NotNull String name, @NotNull String contentType) {
-        put(key, stream, name, contentType, autoCloseInputStreams);
+    @Override
+    public IRequestParams put(@NotNull String key, @NotNull InputStream stream, @NotNull String name, @NotNull String contentType) {
+        return put(key, stream, name, contentType, autoCloseInputStreams);
     }
 
     /**
@@ -257,10 +268,12 @@ public class RequestParams implements IRequestParams {
      * @param contentType the content type of the file, eg. application/json
      * @param autoClose   close input stream automatically on successful upload
      */
-    public void put(@NotNull String key, @NotNull InputStream stream, @NotNull String name, @NotNull String contentType, boolean autoClose) {
+    @Override
+    public IRequestParams put(@NotNull String key, @NotNull InputStream stream, @NotNull String name, @NotNull String contentType, boolean autoClose) {
         if (key != null && stream != null) {
             streamParams.put(key, StreamWrapper.newInstance(stream, name, contentType, autoClose));
         }
+        return this;
     }
 
     /**
@@ -269,10 +282,12 @@ public class RequestParams implements IRequestParams {
      * @param key   the key name for the new param.
      * @param value the non-string value object for the new param.
      */
-    public void put(String key, Object value) {
+    @Override
+    public IRequestParams put(@NotNull String key, @NotNull Object value) {
         if (key != null && value != null) {
             urlParamsWithObjects.put(key, value);
         }
+        return this;
     }
 
     /**
@@ -281,10 +296,12 @@ public class RequestParams implements IRequestParams {
      * @param key   the key name for the new param.
      * @param value the value int for the new param.
      */
-    public void put(String key, int value) {
+    @Override
+    public IRequestParams put(@NotNull String key, @NotNull Integer value) {
         if (key != null) {
             urlParams.put(key, String.valueOf(value));
         }
+        return this;
     }
 
     /**
@@ -293,10 +310,12 @@ public class RequestParams implements IRequestParams {
      * @param key   the key name for the new param.
      * @param value the value long for the new param.
      */
-    public void put(String key, long value) {
+    @Override
+    public IRequestParams put(@NotNull String key, @NotNull Long value) {
         if (key != null) {
             urlParams.put(key, String.valueOf(value));
         }
+        return this;
     }
 
     /**
@@ -305,7 +324,8 @@ public class RequestParams implements IRequestParams {
      * @param key   the key name for the param, either existing or new.
      * @param value the value string for the new param.
      */
-    public void add(String key, String value) {
+    @Override
+    public IRequestParams add(@NotNull String key, @NotNull String value) {
         if (key != null && value != null) {
             Object params = urlParamsWithObjects.get(key);
             if (params == null) {
@@ -319,6 +339,7 @@ public class RequestParams implements IRequestParams {
                 ((Set<Object>) params).add(value);
             }
         }
+        return this;
     }
 
     /**
@@ -326,11 +347,13 @@ public class RequestParams implements IRequestParams {
      *
      * @param key the key name for the parameter to remove.
      */
-    public void remove(String key) {
+    @Override
+    public IRequestParams remove(@NotNull String key) {
         urlParams.remove(key);
         streamParams.remove(key);
         fileParams.remove(key);
         urlParamsWithObjects.remove(key);
+        return this;
     }
 
     @Override
@@ -376,12 +399,16 @@ public class RequestParams implements IRequestParams {
         return result.toString();
     }
 
-    public void setHttpEntityIsRepeatable(boolean isRepeatable) {
+    @Override
+    public IRequestParams setHttpEntityIsRepeatable(boolean isRepeatable) {
         this.isRepeatable = isRepeatable;
+        return this;
     }
 
-    public void setUseJsonStreamer(boolean useJsonStreamer) {
+    @Override
+    public IRequestParams setUseJsonStreamer(boolean useJsonStreamer) {
         this.useJsonStreamer = useJsonStreamer;
+        return this;
     }
 
     /**
@@ -390,8 +417,10 @@ public class RequestParams implements IRequestParams {
      *
      * @param flag boolean whether to automatically close input streams
      */
-    public void setAutoCloseInputStreams(boolean flag) {
+    @Override
+    public IRequestParams setAutoCloseInputStreams(boolean flag) {
         autoCloseInputStreams = flag;
+        return this;
     }
 
     /**
@@ -402,7 +431,9 @@ public class RequestParams implements IRequestParams {
      * org.apache.http.client.methods.HttpEntityEnclosingRequestBase}
      * @throws IOException if one of the streams cannot be read
      */
-    public HttpEntity getEntity(IResponseHandler progressHandler) throws IOException {
+    @NotNull
+    @Override
+    public HttpEntity getEntity(@Nullable final IResponseHandler progressHandler) throws IOException {
         if (useJsonStreamer) {
             return createJsonStreamerEntity(progressHandler);
         } else if (streamParams.isEmpty() && fileParams.isEmpty()) {
@@ -412,7 +443,7 @@ public class RequestParams implements IRequestParams {
         }
     }
 
-    private HttpEntity createJsonStreamerEntity(IResponseHandler progressHandler) throws IOException {
+    private HttpEntity createJsonStreamerEntity(IResponseHandler progressHandler) {
         JsonStreamerEntity entity = new JsonStreamerEntity(progressHandler,
                 !fileParams.isEmpty() || !streamParams.isEmpty());
 
@@ -457,6 +488,7 @@ public class RequestParams implements IRequestParams {
         }
     }
 
+    @NotNull
     private HttpEntity createMultipartEntity(IResponseHandler progressHandler) throws IOException {
         SimpleMultipartEntity entity = new SimpleMultipartEntity(progressHandler);
         entity.setIsRepeatable(isRepeatable);
@@ -543,37 +575,5 @@ public class RequestParams implements IRequestParams {
 
     protected String getParamString() {
         return URLEncodedUtils.format(getParamsList(), contentEncoding);
-    }
-
-    public static class FileWrapper {
-        public final File file;
-        public final String contentType;
-
-        public FileWrapper(File file, String contentType) {
-            this.file = file;
-            this.contentType = contentType;
-        }
-    }
-
-    public static class StreamWrapper {
-        public final InputStream inputStream;
-        public final String name;
-        public final String contentType;
-        public final boolean autoClose;
-
-        public StreamWrapper(InputStream inputStream, String name, String contentType, boolean autoClose) {
-            this.inputStream = inputStream;
-            this.name = name;
-            this.contentType = contentType;
-            this.autoClose = autoClose;
-        }
-
-        static StreamWrapper newInstance(InputStream inputStream, String name, String contentType, boolean autoClose) {
-            return new StreamWrapper(
-                    inputStream,
-                    name,
-                    contentType == null ? APPLICATION_OCTET_STREAM : contentType,
-                    autoClose);
-        }
     }
 }

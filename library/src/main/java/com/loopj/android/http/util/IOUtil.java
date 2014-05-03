@@ -8,7 +8,7 @@ import java.io.OutputStream;
 
 public class IOUtil {
 
-    public static final String LOG_TAG = "IOUtil";
+    private static final String LOG_TAG = "IOUtil";
 
     /**
      * A utility function to close an input stream without raising an exception.

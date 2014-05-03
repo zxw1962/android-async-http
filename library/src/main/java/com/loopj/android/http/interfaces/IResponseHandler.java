@@ -10,6 +10,7 @@ import java.net.URI;
  * Interface to standardize implementations
  */
 public interface IResponseHandler {
+    public static final String DEFAULT_CHARSET = "UTF-8";
 
     /**
      * Returns data whether request completed successfully

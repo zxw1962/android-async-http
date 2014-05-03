@@ -1,27 +1,52 @@
 package com.loopj.android.http.interfaces;
 
+import org.apache.http.HttpEntity;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 public interface IRequestParams {
 
-    void setContentEncoding(@NotNull final String encoding);
+    public final static String APPLICATION_OCTET_STREAM =
+            "application/octet-stream";
 
-    void put(@NotNull String key, @NotNull String value);
+    IRequestParams setContentEncoding(@NotNull final String encoding);
 
-    void put(@NotNull String key, @NotNull File value) throws FileNotFoundException;
+    IRequestParams put(@NotNull final String key, @NotNull final String value);
 
-    void put(@NotNull String key, @NotNull File value, @NotNull String contentType) throws FileNotFoundException;
+    IRequestParams put(@NotNull final String key, @NotNull final File value) throws FileNotFoundException;
 
-    void put(@NotNull String key, @NotNull InputStream value);
+    IRequestParams put(@NotNull final String key, @NotNull final File value, @NotNull final String contentType) throws FileNotFoundException;
 
-    void put(@NotNull String key, @NotNull InputStream value, @NotNull String name);
+    IRequestParams put(@NotNull final String key, @NotNull final InputStream value) throws IllegalArgumentException;
 
-    void put(@NotNull String key, @NotNull InputStream value, @NotNull String name, @NotNull String contentType);
+    IRequestParams put(@NotNull final String key, @NotNull final InputStream value, @NotNull final String name) throws IllegalArgumentException;
 
-    void put(@NotNull String key, @NotNull InputStream value, @NotNull String name, @NotNull String contentType, boolean autoCloseStream);
+    IRequestParams put(@NotNull final String key, @NotNull final InputStream value, @NotNull final String name, @NotNull final String contentType) throws IllegalArgumentException;
+
+    IRequestParams put(@NotNull final String key, @NotNull final InputStream value, @NotNull final String name, @NotNull final String contentType, boolean autoCloseStream) throws IllegalArgumentException;
+
+    IRequestParams put(@NotNull final String key, @NotNull final Object value);
+
+    IRequestParams put(@NotNull final String key, @NotNull final Integer value);
+
+    IRequestParams put(@NotNull final String key, @NotNull final Long value);
+
+    IRequestParams add(@NotNull final String key, @NotNull final String value);
+
+    IRequestParams remove(@NotNull String key);
+
+    IRequestParams setHttpEntityIsRepeatable(boolean isRepeatable);
+
+    IRequestParams setUseJsonStreamer(boolean useJsonStreamer);
+
+    IRequestParams setAutoCloseInputStreams(boolean flag);
+
+    @NotNull
+    HttpEntity getEntity(@Nullable final IResponseHandler progressHandler) throws IOException;
 
 }
