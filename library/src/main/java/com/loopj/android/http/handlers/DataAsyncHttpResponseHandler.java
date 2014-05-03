@@ -1,4 +1,4 @@
-package com.loopj.android.http;
+package com.loopj.android.http.handlers;
 
 /*
     Android Asynchronous Http Client
@@ -20,6 +20,8 @@ package com.loopj.android.http;
 
 import android.os.Message;
 import android.util.Log;
+
+import com.loopj.android.http.util.IOUtil;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.util.ByteArrayBuffer;
@@ -106,7 +108,7 @@ public abstract class DataAsyncHttpResponseHandler extends AsyncHttpResponseHand
                             sendProgressDataMessage(copyOfRange(tmp, 0, l));
                         }
                     } finally {
-                        AsyncHttpClient.silentCloseInputStream(instream);
+                        IOUtil.silentCloseInputStream(instream);
                     }
                     responseBody = buffer.toByteArray();
                 } catch (OutOfMemoryError e) {
@@ -148,4 +150,3 @@ public abstract class DataAsyncHttpResponseHandler extends AsyncHttpResponseHand
         return result;
     }
 }
-

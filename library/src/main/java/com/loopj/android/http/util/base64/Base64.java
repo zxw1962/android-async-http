@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.loopj.android.http;
+package com.loopj.android.http.util.base64;
+
+import com.loopj.android.http.BuildConfig;
 
 import java.io.UnsupportedEncodingException;
 

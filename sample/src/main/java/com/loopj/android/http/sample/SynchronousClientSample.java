@@ -4,10 +4,11 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestHandle;
-import com.loopj.android.http.ResponseHandlerInterface;
-import com.loopj.android.http.SyncHttpClient;
+import com.loopj.android.http.handlers.AsyncHttpResponseHandler;
+import com.loopj.android.http.impl.AsyncHttpClientOptions;
+import com.loopj.android.http.interfaces.IAsyncHttpClient;
+import com.loopj.android.http.interfaces.IRequestHandle;
+import com.loopj.android.http.interfaces.ResponseHandlerInterface;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -18,7 +19,7 @@ public class SynchronousClientSample extends GetSample {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setAsyncHttpClient(new SyncHttpClient());
+        setAsyncHttpClient(new AsyncHttpClient(AsyncHttpClientOptions.synchronousDefaults()));
     }
 
     @Override
@@ -42,8 +43,8 @@ public class SynchronousClientSample extends GetSample {
     }
 
     @Override
-    public RequestHandle executeSample(final AsyncHttpClient client, final String URL, final Header[] headers, HttpEntity entity, final ResponseHandlerInterface responseHandler) {
-        if (client instanceof SyncHttpClient) {
+    public IRequestHandle executeSample(final IAsyncHttpClient client, final String URL, final Header[] headers, HttpEntity entity, final ResponseHandlerInterface responseHandler) {
+        if (client.isSynchronous()) {
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -53,7 +54,7 @@ public class SynchronousClientSample extends GetSample {
                 }
             }).start();
         } else {
-            Log.e(LOG_TAG, "Error, not using SyncHttpClient");
+            Log.e(LOG_TAG, "Error, not using synchronous mode");
         }
         /**
          * SyncHttpClient does not return RequestHandle,

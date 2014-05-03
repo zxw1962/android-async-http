@@ -16,12 +16,15 @@
     limitations under the License.
 */
 
-package com.loopj.android.http;
+package com.loopj.android.http.handlers;
 
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+
+import com.loopj.android.http.interfaces.ResponseHandlerInterface;
+import com.loopj.android.http.util.IOUtil;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -34,50 +37,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-/**
- * Used to intercept and handle the responses from requests made using {@link AsyncHttpClient}. The
- * {@link #onSuccess(int, org.apache.http.Header[], byte[])} method is designed to be anonymously
- * overridden with your own response handling code. <p>&nbsp;</p> Additionally, you can override the
- * {@link #onFailure(int, org.apache.http.Header[], byte[], Throwable)}, {@link #onStart()}, {@link
- * #onFinish()}, {@link #onRetry(int)} and {@link #onProgress(int, int)} methods as required.
- * <p>&nbsp;</p> For example: <p>&nbsp;</p>
- * <pre>
- * AsyncHttpClient client = new AsyncHttpClient();
- * client.get("http://www.google.com", new AsyncHttpResponseHandler() {
- *     &#064;Override
- *     public void onStart() {
- *         // Initiated the request
- *     }
- *
- *     &#064;Override
- *     public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
- *         // Successfully got a response
- *     }
- *
- *     &#064;Override
- *     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable
- * error)
- * {
- *         // Response failed :(
- *     }
- *
- *     &#064;Override
- *     public void onRetry() {
- *         // Request was retried
- *     }
- *
- *     &#064;Override
- *     public void onProgress(int bytesWritten, int totalSize) {
- *         // Progress notification
- *     }
- *
- *     &#064;Override
- *     public void onFinish() {
- *         // Completed the request (either success or failure)
- *     }
- * });
- * </pre>
- */
 public abstract class AsyncHttpResponseHandler implements ResponseHandlerInterface {
     private static final String LOG_TAG = "AsyncHttpResponseHandler";
 
@@ -410,7 +369,7 @@ public abstract class AsyncHttpResponseHandler implements ResponseHandlerInterfa
                             sendProgressMessage(count, (int) (contentLength <= 0 ? 1 : contentLength));
                         }
                     } finally {
-                        AsyncHttpClient.silentCloseInputStream(instream);
+                        IOUtil.silentCloseInputStream(instream);
                     }
                     responseBody = buffer.toByteArray();
                 } catch (OutOfMemoryError e) {

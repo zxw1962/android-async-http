@@ -12,7 +12,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.RequestHandle;
+import com.loopj.android.http.interfaces.IAsyncHttpClient;
+import com.loopj.android.http.interfaces.IRequestHandle;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -29,10 +30,10 @@ import java.util.Locale;
 
 public abstract class SampleParentActivity extends Activity implements SampleInterface {
 
-    private AsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+    private IAsyncHttpClient asyncHttpClient = new AsyncHttpClient();
     private EditText urlEditText, headersEditText, bodyEditText;
     private LinearLayout responseLayout;
-    private final List<RequestHandle> requestHandles = new LinkedList<>();
+    private final List<IRequestHandle> requestHandles = new LinkedList<>();
 
     private static final int LIGHTGREEN = Color.parseColor("#00FF66");
     private static final int LIGHTRED = Color.parseColor("#FF3300");
@@ -70,12 +71,12 @@ public abstract class SampleParentActivity extends Activity implements SampleInt
         }
     }
 
-    public List<RequestHandle> getRequestHandles() {
+    public List<IRequestHandle> getRequestHandles() {
         return requestHandles;
     }
 
     @Override
-    public void addRequestHandle(RequestHandle handle) {
+    public void addRequestHandle(IRequestHandle handle) {
         if (null != handle) {
             requestHandles.add(handle);
         }
@@ -90,7 +91,7 @@ public abstract class SampleParentActivity extends Activity implements SampleInt
     }
 
     public void onCancelButtonPressed() {
-        asyncHttpClient.cancelRequests(SampleParentActivity.this, true);
+        //asyncHttpClient.cancelRequests(SampleParentActivity.this, true);
     }
 
     protected View.OnClickListener onClickListener = new View.OnClickListener() {
@@ -209,12 +210,12 @@ public abstract class SampleParentActivity extends Activity implements SampleInt
         return false;
     }
 
-    public AsyncHttpClient getAsyncHttpClient() {
+    public IAsyncHttpClient getAsyncHttpClient() {
         return this.asyncHttpClient;
     }
 
     @Override
-    public void setAsyncHttpClient(AsyncHttpClient client) {
+    public void setAsyncHttpClient(IAsyncHttpClient client) {
         this.asyncHttpClient = client;
     }
 }

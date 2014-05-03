@@ -1,7 +1,9 @@
-package com.loopj.android.http;
+package com.loopj.android.http.handlers;
 
 import android.content.Context;
 import android.util.Log;
+
+import com.loopj.android.http.util.IOUtil;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -120,9 +122,9 @@ public abstract class FileAsyncHttpResponseHandler extends AsyncHttpResponseHand
                         sendProgressMessage(count, (int) contentLength);
                     }
                 } finally {
-                    AsyncHttpClient.silentCloseInputStream(instream);
+                    IOUtil.silentCloseInputStream(instream);
                     buffer.flush();
-                    AsyncHttpClient.silentCloseOutputStream(buffer);
+                    IOUtil.silentCloseOutputStream(buffer);
                 }
             }
         }

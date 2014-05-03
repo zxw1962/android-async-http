@@ -12,6 +12,11 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.2.3'
+    compile project(':library')
+}
+
 android {
     compileSdkVersion 19
     buildToolsVersion '19.0.3'
@@ -21,7 +26,7 @@ android {
         targetSdkVersion 19
         versionCode Integer.parseInt(VERSION_CODE)
         versionName VERSION_NAME
-        packageName GROUP + '.http.sample'
+        packageName GROUP + 'http.sample' // contains
     }
 
     compileOptions {
@@ -38,9 +43,4 @@ android {
         exclude 'META-INF/LICENSE'
         exclude 'META-INF/NOTICE'
     }
-}
-
-dependencies {
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.2.3'
-    compile project(':library')
 }

@@ -1,4 +1,4 @@
-package com.loopj.android.http;
+package com.loopj.android.http.handlers;
 
 import android.util.Log;
 import org.apache.http.Header;

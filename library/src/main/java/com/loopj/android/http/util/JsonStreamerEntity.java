@@ -16,9 +16,15 @@
     limitations under the License.
 */
 
-package com.loopj.android.http;
+package com.loopj.android.http.util;
 
 import android.util.Log;
+
+import com.loopj.android.http.impl.RequestParams;
+import com.loopj.android.http.interfaces.ResponseHandlerInterface;
+import com.loopj.android.http.util.IOUtil;
+import com.loopj.android.http.util.base64.Base64;
+import com.loopj.android.http.util.base64.Base64OutputStream;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -39,7 +45,7 @@ import java.util.zip.GZIPOutputStream;
  * This has very low memory footprint; suitable for uploading large
  * files using base64 encoding.
  */
-class JsonStreamerEntity implements HttpEntity {
+public class JsonStreamerEntity implements HttpEntity {
 
     private static final String LOG_TAG = "JsonStreamerEntity";
 
@@ -215,7 +221,7 @@ class JsonStreamerEntity implements HttpEntity {
 
         // Flush the contents up the stream.
         os.flush();
-        AsyncHttpClient.silentCloseOutputStream(os);
+        IOUtil.silentCloseOutputStream(os);
     }
 
     private void writeToFromStream(OutputStream os, RequestParams.StreamWrapper entry)
@@ -236,7 +242,7 @@ class JsonStreamerEntity implements HttpEntity {
         }
 
         // Close the Base64 output stream.
-        AsyncHttpClient.silentCloseOutputStream(bos);
+        IOUtil.silentCloseOutputStream(bos);
 
         // End the meta data.
         endMetaData(os);
@@ -244,7 +250,7 @@ class JsonStreamerEntity implements HttpEntity {
         // Close input stream.
         if (entry.autoClose) {
             // Safely close the input stream.
-            AsyncHttpClient.silentCloseInputStream(entry.inputStream);
+            IOUtil.silentCloseInputStream(entry.inputStream);
         }
     }
 
@@ -271,13 +277,13 @@ class JsonStreamerEntity implements HttpEntity {
         }
 
         // Close the Base64 output stream.
-        AsyncHttpClient.silentCloseOutputStream(bos);
+        IOUtil.silentCloseOutputStream(bos);
 
         // End the meta data.
         endMetaData(os);
 
         // Safely close the input stream.
-        AsyncHttpClient.silentCloseInputStream(in);
+        IOUtil.silentCloseInputStream(in);
     }
 
     private void writeMetaData(OutputStream os, String name, String contentType) throws IOException {

@@ -2,12 +2,10 @@ package com.loopj.android.http.sample;
 
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
-
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
+import com.loopj.android.http.impl.AsyncHttpClientOptions;
+import com.loopj.android.http.interfaces.IAsyncHttpClient;
 
 public class Redirect302Sample extends GetSample {
 
@@ -63,17 +61,7 @@ public class Redirect302Sample extends GetSample {
     }
 
     @Override
-    public AsyncHttpClient getAsyncHttpClient() {
-        AsyncHttpClient ahc = super.getAsyncHttpClient();
-        HttpClient client = ahc.getHttpClient();
-        if (client instanceof DefaultHttpClient) {
-            Toast.makeText(this,
-                    String.format("redirects: %b\nrelative redirects: %b\ncircular redirects: %b",
-                            enableRedirects, enableRelativeRedirects, enableCircularRedirects),
-                    Toast.LENGTH_SHORT
-            ).show();
-            ahc.setEnableRedirects(enableRedirects, enableRelativeRedirects, enableCircularRedirects);
-        }
-        return ahc;
+    public IAsyncHttpClient getAsyncHttpClient() {
+        return new AsyncHttpClient(AsyncHttpClientOptions.defaults().setIsHandlingRedirects(true, true, true));
     }
 }

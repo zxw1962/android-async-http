@@ -16,7 +16,7 @@
     limitations under the License.
 */
 
-package com.loopj.android.http;
+package com.loopj.android.http.handlers;
 
 import android.util.Log;
 
@@ -28,12 +28,12 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 /**
- * Used to intercept and handle the responses from requests made using {@link AsyncHttpClient}, with
- * automatic parsing into a {@link JSONObject} or {@link JSONArray}. <p>&nbsp;</p> This class is
- * designed to be passed to get, post, put and delete requests with the {@link #onSuccess(int,
- * org.apache.http.Header[], org.json.JSONArray)} or {@link #onSuccess(int,
- * org.apache.http.Header[], org.json.JSONObject)} methods anonymously overridden. <p>&nbsp;</p>
- * Additionally, you can override the other event methods from the parent class.
+ * Used to intercept and handle the responses from requests made using {@link
+ * com.loopj.android.http.AsyncHttpClient}, with automatic parsing into a {@link JSONObject} or
+ * {@link JSONArray}. <p>&nbsp;</p> This class is designed to be passed to get, post, put and delete
+ * requests with the {@link #onSuccess(int, org.apache.http.Header[], org.json.JSONArray)} or {@link
+ * #onSuccess(int, org.apache.http.Header[], org.json.JSONObject)} methods anonymously overridden.
+ * <p>&nbsp;</p> Additionally, you can override the other event methods from the parent class.
  */
 public class JsonHttpResponseHandler extends TextHttpResponseHandler {
     private static final String LOG_TAG = "JsonHttpResponseHandler";
@@ -113,7 +113,7 @@ public class JsonHttpResponseHandler extends TextHttpResponseHandler {
     @Override
     public final void onSuccess(final int statusCode, final Header[] headers, final byte[] responseBytes) {
         if (statusCode != HttpStatus.SC_NO_CONTENT) {
-	    Runnable parser = new Runnable() {
+            Runnable parser = new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -142,11 +142,11 @@ public class JsonHttpResponseHandler extends TextHttpResponseHandler {
                         });
                     }
                 }
-	    };
-	    if (!getUseSynchronousMode())
-		new Thread(parser).start();
-	    else // In synchronous mode everything should be run on one thread
-		parser.run();
+            };
+            if (!getUseSynchronousMode())
+                new Thread(parser).start();
+            else // In synchronous mode everything should be run on one thread
+                parser.run();
         } else {
             onSuccess(statusCode, headers, new JSONObject());
         }
@@ -155,7 +155,7 @@ public class JsonHttpResponseHandler extends TextHttpResponseHandler {
     @Override
     public final void onFailure(final int statusCode, final Header[] headers, final byte[] responseBytes, final Throwable throwable) {
         if (responseBytes != null) {
-	    Runnable parser = new Runnable() {
+            Runnable parser = new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -185,11 +185,11 @@ public class JsonHttpResponseHandler extends TextHttpResponseHandler {
 
                     }
                 }
-	    };
-	    if (!getUseSynchronousMode())
-		new Thread(parser).start();
-	    else // In synchronous mode everything should be run on one thread
-		parser.run();
+            };
+            if (!getUseSynchronousMode())
+                new Thread(parser).start();
+            else // In synchronous mode everything should be run on one thread
+                parser.run();
         } else {
             Log.v(LOG_TAG, "response body is null, calling onFailure(Throwable, JSONObject)");
             onFailure(statusCode, headers, throwable, (JSONObject) null);

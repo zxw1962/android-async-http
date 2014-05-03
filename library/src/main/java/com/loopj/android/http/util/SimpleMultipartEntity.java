@@ -21,9 +21,13 @@
     http://blog.rafaelsanches.com/2011/01/29/upload-using-multipart-post-using-httpclient-in-android/
 */
 
-package com.loopj.android.http;
+package com.loopj.android.http.util;
 
 import android.util.Log;
+
+import com.loopj.android.http.impl.RequestParams;
+import com.loopj.android.http.interfaces.ResponseHandlerInterface;
+import com.loopj.android.http.util.IOUtil;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
@@ -42,17 +46,17 @@ import java.util.Random;
 /**
  * Simplified multipart entity mainly used for sending one or more files.
  */
-class SimpleMultipartEntity implements HttpEntity {
+public class SimpleMultipartEntity implements HttpEntity {
 
     private static final String LOG_TAG = "SimpleMultipartEntity";
 
     private static final String STR_CR_LF = "\r\n";
     private static final byte[] CR_LF = STR_CR_LF.getBytes();
     private static final byte[] TRANSFER_ENCODING_BINARY =
-        ("Content-Transfer-Encoding: binary" + STR_CR_LF).getBytes();
+            ("Content-Transfer-Encoding: binary" + STR_CR_LF).getBytes();
 
     private final static char[] MULTIPART_CHARS =
-        "-_1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
+            "-_1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
 
     private final String boundary;
     private final byte[] boundaryLine;
@@ -132,11 +136,11 @@ class SimpleMultipartEntity implements HttpEntity {
         out.write(CR_LF);
         out.flush();
 
-        AsyncHttpClient.silentCloseOutputStream(out);
+        IOUtil.silentCloseOutputStream(out);
     }
 
     private String normalizeContentType(String type) {
-       return type == null ? RequestParams.APPLICATION_OCTET_STREAM : type;
+        return type == null ? RequestParams.APPLICATION_OCTET_STREAM : type;
     }
 
     private byte[] createContentType(String type) {
@@ -146,12 +150,12 @@ class SimpleMultipartEntity implements HttpEntity {
 
     private byte[] createContentDisposition(String key) {
         return ("Content-Disposition: form-data; name=\"" + key + "\"" + STR_CR_LF)
-            .getBytes();
+                .getBytes();
     }
 
     private byte[] createContentDisposition(String key, String fileName) {
         return ("Content-Disposition: form-data; name=\"" + key + "\"; filename=\"" + fileName + "\"" + STR_CR_LF)
-            .getBytes();
+                .getBytes();
     }
 
     private void updateProgress(int count) {
@@ -204,7 +208,7 @@ class SimpleMultipartEntity implements HttpEntity {
             out.write(CR_LF);
             updateProgress(CR_LF.length);
             out.flush();
-            AsyncHttpClient.silentCloseInputStream(inputStream);
+            IOUtil.silentCloseInputStream(inputStream);
         }
     }
 

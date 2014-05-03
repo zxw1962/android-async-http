@@ -1,4 +1,4 @@
-package com.loopj.android.http;
+package com.loopj.android.http.util.base64;
 
 import java.io.IOException;
 

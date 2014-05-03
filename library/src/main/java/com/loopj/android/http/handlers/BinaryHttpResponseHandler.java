@@ -16,7 +16,7 @@
     limitations under the License.
 */
 
-package com.loopj.android.http;
+package com.loopj.android.http.handlers;
 
 import android.util.Log;
 
@@ -30,9 +30,10 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * Used to intercept and handle the responses from requests made using {@link AsyncHttpClient}.
- * Receives response body as byte array with a content-type whitelist. (e.g. checks Content-Type
- * against allowed list, Content-length). <p>&nbsp;</p> For example: <p>&nbsp;</p>
+ * Used to intercept and handle the responses from requests made using {@link
+ * com.loopj.android.http.AsyncHttpClient}. Receives response body as byte array with a content-type
+ * whitelist. (e.g. checks Content-Type against allowed list, Content-length). <p>&nbsp;</p> For
+ * example: <p>&nbsp;</p>
  * <pre>
  * AsyncHttpClient client = new AsyncHttpClient();
  * String[] allowedTypes = new String[] { "image/png" };
