@@ -53,6 +53,22 @@ public interface IAsyncHttpClientOptions {
     public boolean areConnectionsKeptAlive();
 
     @NotNull
+    IAsyncHttpClientOptions setConfigurationInterceptor(@NotNull final IConfigurationInterceptor configurationInterceptor);
+
+    @Nullable
+    public IConfigurationInterceptor getConfigurationInterceptor();
+
+    @NotNull
+    IAsyncHttpClientOptions setMaxParallelConnectionsTotal(final int maxParallelConnections);
+
+    public int getMaxParallelConnectionsTotal();
+
+    @NotNull
+    IAsyncHttpClientOptions setMaxParallelConnectionsPerRoute(final int maxParallelConnectionsPerRoute);
+
+    public int getMaxParallelConnectionsPerRoute();
+
+    @NotNull
     CloseableHttpClient buildHttpClient(@NotNull HttpClientBuilder httpClientBuilder);
 
 }

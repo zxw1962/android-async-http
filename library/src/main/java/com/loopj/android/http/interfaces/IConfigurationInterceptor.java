@@ -7,6 +7,8 @@ import org.jetbrains.annotations.NotNull;
 
 public interface IConfigurationInterceptor {
 
+    public boolean useDefaultConfig();
+
     public void modifyRequestConfigBuilder(@NotNull RequestConfig.Builder builder);
 
     public void modifyHttpClientBuilder(@NotNull HttpClientBuilder httpClientBuilder);
