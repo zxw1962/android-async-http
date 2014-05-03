@@ -50,7 +50,7 @@ import java.util.regex.PatternSyntaxException;
  * });
  * </pre>
  */
-public abstract class BinaryHttpIResponseHandler extends AsyncHttpIResponseHandler {
+public abstract class BinaryHttpResponseHandler extends AsyncHttpResponseHandler {
 
     private static final String LOG_TAG = "BinaryHttpResponseHandler";
 
@@ -72,7 +72,7 @@ public abstract class BinaryHttpIResponseHandler extends AsyncHttpIResponseHandl
     /**
      * Creates a new BinaryHttpResponseHandler
      */
-    public BinaryHttpIResponseHandler() {
+    public BinaryHttpResponseHandler() {
         super();
     }
 
@@ -82,7 +82,7 @@ public abstract class BinaryHttpIResponseHandler extends AsyncHttpIResponseHandl
      *
      * @param allowedContentTypes content types array, eg. 'image/jpeg' or pattern '.*'
      */
-    public BinaryHttpIResponseHandler(String[] allowedContentTypes) {
+    public BinaryHttpResponseHandler(String[] allowedContentTypes) {
         super();
         if (allowedContentTypes != null)
             mAllowedContentTypes = allowedContentTypes;

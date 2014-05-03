@@ -49,4 +49,7 @@ public interface IRequestParams {
     @NotNull
     HttpEntity getEntity(@Nullable final IResponseHandler progressHandler) throws IOException;
 
+    @NotNull
+    String getParamString();
+
 }

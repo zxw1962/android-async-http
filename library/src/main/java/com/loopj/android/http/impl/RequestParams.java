@@ -573,7 +573,9 @@ public class RequestParams implements IRequestParams {
         return params;
     }
 
-    protected String getParamString() {
+    @Override
+    @NotNull
+    public String getParamString() {
         return URLEncodedUtils.format(getParamsList(), contentEncoding);
     }
 }

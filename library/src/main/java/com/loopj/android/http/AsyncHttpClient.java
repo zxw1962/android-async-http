@@ -10,8 +10,10 @@ import com.loopj.android.http.interfaces.IAsyncHttpClientOptions;
 import com.loopj.android.http.interfaces.IRequestHandle;
 import com.loopj.android.http.interfaces.IRequestParams;
 import com.loopj.android.http.interfaces.IResponseHandler;
+import com.loopj.android.http.util.HttpUtil;
 
 import org.apache.http.Header;
+import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.HttpDeleteHC4;
 import org.apache.http.client.methods.HttpGetHC4;
 import org.apache.http.client.methods.HttpHeadHC4;
@@ -28,7 +30,7 @@ import org.jetbrains.annotations.Nullable;
 public class AsyncHttpClient extends AbstractAsyncHttpClient {
 
     public AsyncHttpClient() {
-        super(AsyncHttpClientOptions.defaults());
+        super(AsyncHttpClientOptions.DEFAULTS);
     }
 
     public AsyncHttpClient(@NotNull IAsyncHttpClientOptions asyncHttpClientOptions) {
@@ -38,56 +40,77 @@ public class AsyncHttpClient extends AbstractAsyncHttpClient {
     @NotNull
     @Override
     public IRequestHandle head(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable IResponseHandler responseHandler) {
-        RequestBuilder uriRequestBuilder = createRequestBuilder(HttpHeadHC4.METHOD_NAME, url, headers);
+        RequestBuilder uriRequestBuilder = HttpUtil.createRequestBuilder(HttpHeadHC4.METHOD_NAME, getConfigurationOptions(), url, headers, null, params);
         return execute(context, uriRequestBuilder, responseHandler);
     }
 
     @NotNull
     @Override
     public IRequestHandle post(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable IResponseHandler responseHandler) {
-        RequestBuilder uriRequestBuilder = createRequestBuilder(HttpPostHC4.METHOD_NAME, url, headers);
+        RequestBuilder uriRequestBuilder = HttpUtil.createRequestBuilder(HttpPostHC4.METHOD_NAME, getConfigurationOptions(), url, headers, HttpUtil.paramsToEntity(params, responseHandler), params);
+        return execute(context, uriRequestBuilder, responseHandler);
+    }
+
+    @NotNull
+    @Override
+    public IRequestHandle post(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable HttpEntity httpEntity, @Nullable IResponseHandler responseHandler) {
+        RequestBuilder uriRequestBuilder = HttpUtil.createRequestBuilder(HttpPostHC4.METHOD_NAME, getConfigurationOptions(), url, headers, httpEntity, null);
         return execute(context, uriRequestBuilder, responseHandler);
     }
 
     @NotNull
     @Override
     public IRequestHandle get(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable IResponseHandler responseHandler) {
-        RequestBuilder uriRequestBuilder = createRequestBuilder(HttpGetHC4.METHOD_NAME, url, headers);
+        RequestBuilder uriRequestBuilder = HttpUtil.createRequestBuilder(HttpGetHC4.METHOD_NAME, getConfigurationOptions(), url, headers, null, params);
         return execute(context, uriRequestBuilder, responseHandler);
     }
 
     @NotNull
     @Override
     public IRequestHandle delete(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable IResponseHandler responseHandler) {
-        RequestBuilder uriRequestBuilder = createRequestBuilder(HttpDeleteHC4.METHOD_NAME, url, headers);
+        RequestBuilder uriRequestBuilder = HttpUtil.createRequestBuilder(HttpDeleteHC4.METHOD_NAME, getConfigurationOptions(), url, headers, null, params);
         return execute(context, uriRequestBuilder, responseHandler);
     }
 
     @NotNull
     @Override
     public IRequestHandle options(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable IResponseHandler responseHandler) {
-        RequestBuilder uriRequestBuilder = createRequestBuilder(HttpOptionsHC4.METHOD_NAME, url, headers);
+        RequestBuilder uriRequestBuilder = HttpUtil.createRequestBuilder(HttpOptionsHC4.METHOD_NAME, getConfigurationOptions(), url, headers, null, params);
         return execute(context, uriRequestBuilder, responseHandler);
     }
 
     @NotNull
     @Override
     public IRequestHandle patch(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable IResponseHandler responseHandler) {
-        RequestBuilder uriRequestBuilder = createRequestBuilder(HttpPatch.METHOD_NAME, url, headers);
+        RequestBuilder uriRequestBuilder = HttpUtil.createRequestBuilder(HttpPatch.METHOD_NAME, getConfigurationOptions(), url, headers, HttpUtil.paramsToEntity(params, responseHandler), params);
+        return execute(context, uriRequestBuilder, responseHandler);
+    }
+
+    @NotNull
+    @Override
+    public IRequestHandle patch(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable HttpEntity httpEntity, @Nullable IResponseHandler responseHandler) {
+        RequestBuilder uriRequestBuilder = HttpUtil.createRequestBuilder(HttpPatch.METHOD_NAME, getConfigurationOptions(), url, headers, httpEntity, null);
         return execute(context, uriRequestBuilder, responseHandler);
     }
 
     @NotNull
     @Override
     public IRequestHandle put(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable IResponseHandler responseHandler) {
-        RequestBuilder uriRequestBuilder = createRequestBuilder(HttpPutHC4.METHOD_NAME, url, headers);
+        RequestBuilder uriRequestBuilder = HttpUtil.createRequestBuilder(HttpPutHC4.METHOD_NAME, getConfigurationOptions(), url, headers, HttpUtil.paramsToEntity(params, responseHandler), params);
+        return execute(context, uriRequestBuilder, responseHandler);
+    }
+
+    @NotNull
+    @Override
+    public IRequestHandle put(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable HttpEntity httpEntity, @Nullable IResponseHandler responseHandler) {
+        RequestBuilder uriRequestBuilder = HttpUtil.createRequestBuilder(HttpPutHC4.METHOD_NAME, getConfigurationOptions(), url, headers, httpEntity, null);
         return execute(context, uriRequestBuilder, responseHandler);
     }
 
     @NotNull
     @Override
     public IRequestHandle trace(@NotNull Context context, @NotNull String url, @Nullable Header[] headers, @Nullable IRequestParams params, @Nullable IResponseHandler responseHandler) {
-        RequestBuilder uriRequestBuilder = createRequestBuilder(HttpTraceHC4.METHOD_NAME, url, headers);
+        RequestBuilder uriRequestBuilder = HttpUtil.createRequestBuilder(HttpTraceHC4.METHOD_NAME, getConfigurationOptions(), url, headers, null, params);
         return execute(context, uriRequestBuilder, responseHandler);
     }
 
@@ -118,15 +141,5 @@ public class AsyncHttpClient extends AbstractAsyncHttpClient {
         return true;
     }
 
-    @NotNull
-    protected RequestBuilder createRequestBuilder(@NotNull String method, @NotNull String url, @Nullable Header[] headers) {
-        RequestBuilder mBuilder = RequestBuilder.create(method);
-        mBuilder.setUri(url);
-        if (headers != null) {
-            for (Header header : headers) {
-                mBuilder.addHeader(header);
-            }
-        }
-        return mBuilder;
-    }
+
 }

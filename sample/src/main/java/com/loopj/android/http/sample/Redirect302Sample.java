@@ -62,6 +62,6 @@ public class Redirect302Sample extends GetSample {
 
     @Override
     public IAsyncHttpClient getAsyncHttpClient() {
-        return new AsyncHttpClient(AsyncHttpClientOptions.defaults().setIsHandlingRedirects(true, true, true));
+        return new AsyncHttpClient(AsyncHttpClientOptions.DEFAULTS.setIsHandlingRedirects(true, true, true));
     }
 }

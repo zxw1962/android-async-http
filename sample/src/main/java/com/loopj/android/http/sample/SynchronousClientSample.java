@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.handlers.AsyncHttpIResponseHandler;
+import com.loopj.android.http.handlers.AsyncHttpResponseHandler;
 import com.loopj.android.http.impl.AsyncHttpClientOptions;
 import com.loopj.android.http.interfaces.IAsyncHttpClient;
 import com.loopj.android.http.interfaces.IRequestHandle;
@@ -19,7 +19,7 @@ public class SynchronousClientSample extends GetSample {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setAsyncHttpClient(new AsyncHttpClient(AsyncHttpClientOptions.synchronousDefaults()));
+        setAsyncHttpClient(new AsyncHttpClient(AsyncHttpClientOptions.SYNCHRONOUS_DEFAULTS));
     }
 
     @Override
@@ -66,7 +66,7 @@ public class SynchronousClientSample extends GetSample {
 
     @Override
     public IResponseHandler getResponseHandler() {
-        return new AsyncHttpIResponseHandler() {
+        return new AsyncHttpResponseHandler() {
 
             @Override
             public void onStart() {

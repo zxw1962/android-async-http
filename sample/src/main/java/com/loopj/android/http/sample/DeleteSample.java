@@ -1,6 +1,6 @@
 package com.loopj.android.http.sample;
 
-import com.loopj.android.http.handlers.AsyncHttpIResponseHandler;
+import com.loopj.android.http.handlers.AsyncHttpResponseHandler;
 import com.loopj.android.http.interfaces.IAsyncHttpClient;
 import com.loopj.android.http.interfaces.IRequestHandle;
 import com.loopj.android.http.interfaces.IResponseHandler;
@@ -39,7 +39,7 @@ public class DeleteSample extends SampleParentActivity {
 
     @Override
     public IResponseHandler getResponseHandler() {
-        return new AsyncHttpIResponseHandler() {
+        return new AsyncHttpResponseHandler() {
 
             @Override
             public void onStart() {

@@ -1,7 +1,7 @@
 package com.loopj.android.http.sample;
 
 
-import com.loopj.android.http.handlers.AsyncHttpIResponseHandler;
+import com.loopj.android.http.handlers.AsyncHttpResponseHandler;
 import com.loopj.android.http.interfaces.IAsyncHttpClient;
 import com.loopj.android.http.interfaces.IRequestHandle;
 import com.loopj.android.http.interfaces.IResponseHandler;
@@ -14,7 +14,7 @@ public class PutSample extends SampleParentActivity {
 
     @Override
     public IRequestHandle executeSample(IAsyncHttpClient client, String URL, Header[] headers, HttpEntity entity, IResponseHandler responseHandler) {
-        return client.put(this, URL, headers, null /*entity*/, responseHandler);
+        return client.put(this, URL, headers, entity, responseHandler);
     }
 
     @Override
@@ -39,7 +39,7 @@ public class PutSample extends SampleParentActivity {
 
     @Override
     public IResponseHandler getResponseHandler() {
-        return new AsyncHttpIResponseHandler() {
+        return new AsyncHttpResponseHandler() {
 
             @Override
             public void onStart() {

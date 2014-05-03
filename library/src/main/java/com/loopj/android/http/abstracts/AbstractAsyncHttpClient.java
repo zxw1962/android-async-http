@@ -54,4 +54,5 @@ public abstract class AbstractAsyncHttpClient implements IAsyncHttpClient {
     public IAsyncHttpClientOptions getConfigurationOptions() {
         return mOptions;
     }
+
 }

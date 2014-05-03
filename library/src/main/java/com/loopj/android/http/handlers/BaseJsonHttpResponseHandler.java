@@ -30,13 +30,13 @@ import org.apache.http.HttpStatus;
  * org.apache.http.Header[], String, Object)} or {@link #onFailure(int, org.apache.http.Header[],
  * Throwable, String, Object)}, depending of response HTTP status line (result http code)
  */
-public abstract class BaseJsonHttpIResponseHandler<JSON_TYPE> extends TextHttpIResponseHandler {
+public abstract class BaseJsonHttpResponseHandler<JSON_TYPE> extends TextHttpResponseHandler {
     private static final String LOG_TAG = "BaseJsonHttpResponseHandler";
 
     /**
      * Creates a new JsonHttpResponseHandler with default charset "UTF-8"
      */
-    public BaseJsonHttpIResponseHandler() {
+    public BaseJsonHttpResponseHandler() {
         this(DEFAULT_CHARSET);
     }
 
@@ -45,7 +45,7 @@ public abstract class BaseJsonHttpIResponseHandler<JSON_TYPE> extends TextHttpIR
      *
      * @param encoding result string encoding, see <a href="http://docs.oracle.com/javase/7/docs/api/java/nio/charset/Charset.html">Charset</a>
      */
-    public BaseJsonHttpIResponseHandler(String encoding) {
+    public BaseJsonHttpResponseHandler(String encoding) {
         super(encoding);
     }
 

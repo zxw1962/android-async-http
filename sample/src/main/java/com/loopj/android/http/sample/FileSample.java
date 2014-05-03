@@ -2,7 +2,7 @@ package com.loopj.android.http.sample;
 
 import android.util.Log;
 
-import com.loopj.android.http.handlers.FileAsyncHttpIResponseHandler;
+import com.loopj.android.http.handlers.FileAsyncHttpResponseHandler;
 import com.loopj.android.http.interfaces.IAsyncHttpClient;
 import com.loopj.android.http.interfaces.IRequestHandle;
 import com.loopj.android.http.interfaces.IResponseHandler;
@@ -38,7 +38,7 @@ public class FileSample extends SampleParentActivity {
 
     @Override
     public IResponseHandler getResponseHandler() {
-        return new FileAsyncHttpIResponseHandler(this) {
+        return new FileAsyncHttpResponseHandler(this) {
             @Override
             public void onStart() {
                 clearOutputs();

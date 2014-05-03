@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 
-public abstract class FileAsyncHttpIResponseHandler extends AsyncHttpIResponseHandler {
+public abstract class FileAsyncHttpResponseHandler extends AsyncHttpResponseHandler {
 
     protected final File mFile;
     private static final String LOG_TAG = "FileAsyncHttpResponseHandler";
@@ -24,7 +24,7 @@ public abstract class FileAsyncHttpIResponseHandler extends AsyncHttpIResponseHa
      *
      * @param file File to store response within, must not be null
      */
-    public FileAsyncHttpIResponseHandler(File file) {
+    public FileAsyncHttpResponseHandler(File file) {
         super();
         assert (file != null);
         this.mFile = file;
@@ -35,7 +35,7 @@ public abstract class FileAsyncHttpIResponseHandler extends AsyncHttpIResponseHa
      *
      * @param context Context, must not be null
      */
-    public FileAsyncHttpIResponseHandler(Context context) {
+    public FileAsyncHttpResponseHandler(Context context) {
         super();
         this.mFile = getTemporaryFile(context);
     }

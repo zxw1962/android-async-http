@@ -29,7 +29,7 @@ import org.apache.http.util.ByteArrayBuffer;
 import java.io.IOException;
 import java.io.InputStream;
 
-public abstract class DataAsyncHttpIResponseHandler extends AsyncHttpIResponseHandler {
+public abstract class DataAsyncHttpResponseHandler extends AsyncHttpResponseHandler {
     private static final String LOG_TAG = "DataAsyncHttpResponseHandler";
 
     protected static final int PROGRESS_DATA_MESSAGE = 6;
@@ -37,7 +37,7 @@ public abstract class DataAsyncHttpIResponseHandler extends AsyncHttpIResponseHa
     /**
      * Creates a new AsyncHttpResponseHandler
      */
-    public DataAsyncHttpIResponseHandler() {
+    public DataAsyncHttpResponseHandler() {
         super();
     }
 

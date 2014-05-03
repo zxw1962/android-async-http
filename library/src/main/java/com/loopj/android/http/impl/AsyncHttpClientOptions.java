@@ -28,13 +28,8 @@ public class AsyncHttpClientOptions implements IAsyncHttpClientOptions {
     public int mMaxConnectionsPerRoute = 100;
     public IConfigurationInterceptor mConfigurationInterceptor = null;
 
-    public static IAsyncHttpClientOptions defaults() {
-        return new AsyncHttpClientOptions();
-    }
-
-    public static IAsyncHttpClientOptions synchronousDefaults() {
-        return new AsyncHttpClientOptions().setIsSynchronous(true);
-    }
+    public static final IAsyncHttpClientOptions DEFAULTS = new AsyncHttpClientOptions();
+    public static final IAsyncHttpClientOptions SYNCHRONOUS_DEFAULTS = new AsyncHttpClientOptions().setIsSynchronous(true);
 
     @NotNull
     @Override

@@ -1,6 +1,6 @@
 package com.loopj.android.http.sample;
 
-import com.loopj.android.http.handlers.BinaryHttpIResponseHandler;
+import com.loopj.android.http.handlers.BinaryHttpResponseHandler;
 import com.loopj.android.http.interfaces.IAsyncHttpClient;
 import com.loopj.android.http.interfaces.IRequestHandle;
 import com.loopj.android.http.interfaces.IResponseHandler;
@@ -33,7 +33,7 @@ public class BinarySample extends SampleParentActivity {
 
     @Override
     public IResponseHandler getResponseHandler() {
-        return new BinaryHttpIResponseHandler() {
+        return new BinaryHttpResponseHandler() {
             @Override
             public void onStart() {
                 clearOutputs();

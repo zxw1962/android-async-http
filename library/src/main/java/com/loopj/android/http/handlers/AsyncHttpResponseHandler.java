@@ -37,7 +37,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 
-public abstract class AsyncHttpIResponseHandler implements IResponseHandler {
+public abstract class AsyncHttpResponseHandler implements IResponseHandler {
     private static final String LOG_TAG = "AsyncHttpResponseHandler";
 
     protected static final int SUCCESS_MESSAGE = 0;
@@ -81,9 +81,9 @@ public abstract class AsyncHttpIResponseHandler implements IResponseHandler {
      * Avoid leaks by using a non-anonymous handler class.
      */
     private static class ResponderHandler extends Handler {
-        private final AsyncHttpIResponseHandler mResponder;
+        private final AsyncHttpResponseHandler mResponder;
 
-        ResponderHandler(AsyncHttpIResponseHandler mResponder) {
+        ResponderHandler(AsyncHttpResponseHandler mResponder) {
             this.mResponder = mResponder;
         }
 
@@ -135,7 +135,7 @@ public abstract class AsyncHttpIResponseHandler implements IResponseHandler {
     /**
      * Creates a new AsyncHttpResponseHandler
      */
-    public AsyncHttpIResponseHandler() {
+    public AsyncHttpResponseHandler() {
         // Use asynchronous mode by default.
         setUseSynchronousMode(false);
     }

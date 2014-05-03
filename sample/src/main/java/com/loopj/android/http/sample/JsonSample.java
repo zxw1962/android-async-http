@@ -2,7 +2,7 @@ package com.loopj.android.http.sample;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.loopj.android.http.handlers.BaseJsonHttpIResponseHandler;
+import com.loopj.android.http.handlers.BaseJsonHttpResponseHandler;
 import com.loopj.android.http.interfaces.IAsyncHttpClient;
 import com.loopj.android.http.interfaces.IRequestHandle;
 import com.loopj.android.http.interfaces.IResponseHandler;
@@ -42,7 +42,7 @@ public class JsonSample extends SampleParentActivity {
 
     @Override
     public IResponseHandler getResponseHandler() {
-        return new BaseJsonHttpIResponseHandler<SampleJSON>() {
+        return new BaseJsonHttpResponseHandler<SampleJSON>() {
 
             @Override
             public void onStart() {

@@ -2,7 +2,7 @@ package com.loopj.android.http.sample;
 
 import android.util.SparseArray;
 
-import com.loopj.android.http.handlers.AsyncHttpIResponseHandler;
+import com.loopj.android.http.handlers.AsyncHttpResponseHandler;
 import com.loopj.android.http.interfaces.IAsyncHttpClient;
 import com.loopj.android.http.interfaces.IRequestHandle;
 import com.loopj.android.http.interfaces.IResponseHandler;
@@ -52,7 +52,7 @@ public class ThreadingTimeoutSample extends SampleParentActivity {
 
     @Override
     public IResponseHandler getResponseHandler() {
-        return new AsyncHttpIResponseHandler() {
+        return new AsyncHttpResponseHandler() {
 
             private int id = counter++;
 
