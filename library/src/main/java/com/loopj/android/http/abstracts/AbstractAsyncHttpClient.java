@@ -17,6 +17,15 @@ import org.jetbrains.annotations.Nullable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Abstract default implementation of IAsyncHttpClient interface, working with basic {@link
+ * org.apache.http.protocol.HttpContext}
+ *
+ * @see com.loopj.android.http.interfaces.IAsyncHttpClient
+ * @see org.apache.http.impl.client.CloseableHttpClient
+ * @see java.util.concurrent.ExecutorService
+ * @see com.loopj.android.http.interfaces.IAsyncHttpClientOptions
+ */
 public abstract class AbstractAsyncHttpClient implements IAsyncHttpClient {
 
     @NotNull
@@ -31,6 +40,15 @@ public abstract class AbstractAsyncHttpClient implements IAsyncHttpClient {
     @NotNull
     private HttpContext mHttpContext = new SyncBasicHttpContext(new BasicHttpContextHC4());
 
+    /**
+     * Creates basic instance of AbstractAsyncHttpClient, configured with provided {@link
+     * com.loopj.android.http.interfaces.IAsyncHttpClientOptions}
+     *
+     * @param asyncHttpClientOptions options to be used in configuration (must not be null)
+     * @see com.loopj.android.http.interfaces.IAsyncHttpClientOptions
+     * @see org.apache.http.impl.client.HttpClientBuilder
+     * @see org.apache.http.impl.client.CloseableHttpClient
+     */
     public AbstractAsyncHttpClient(@NotNull final IAsyncHttpClientOptions asyncHttpClientOptions) {
         HttpClientBuilder mBuilder = HttpClientBuilder.create();
         mHttpClient = asyncHttpClientOptions.buildHttpClient(mBuilder);

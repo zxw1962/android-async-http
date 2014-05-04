@@ -73,13 +73,7 @@ public class AsyncHttpClientOptions implements IAsyncHttpClientOptions {
 
     @NotNull
     @Override
-    public IAsyncHttpClientOptions setBasicAuth() {
-        return this;
-    }
-
-    @NotNull
-    @Override
-    public IAsyncHttpClientOptions setUserAgent(@NotNull String userAgent) {
+    public IAsyncHttpClientOptions setUserAgent(@Nullable @NotNull String userAgent) {
         this.mUserAgent = userAgent;
         return this;
     }
@@ -218,9 +212,7 @@ public class AsyncHttpClientOptions implements IAsyncHttpClientOptions {
         }
 
         if (getConfigurationInterceptor() != null) {
-            getConfigurationInterceptor().modifyConnectionManager(connectionManager);
-            getConfigurationInterceptor().modifyRequestConfigBuilder(defaultConfigBuilder);
-            getConfigurationInterceptor().modifyHttpClientBuilder(httpClientBuilder);
+            getConfigurationInterceptor().configureComponents(defaultConfigBuilder, httpClientBuilder, connectionManager);
         }
 
         httpClientBuilder.setConnectionManager(connectionManager);

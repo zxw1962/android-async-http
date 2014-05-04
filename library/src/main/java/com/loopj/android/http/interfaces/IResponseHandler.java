@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.net.URI;
 
 /**
- * Interface to standardize implementations
+ * Interface to standardize implementations of response handlers
  */
 public interface IResponseHandler {
     public static final String DEFAULT_CHARSET = "UTF-8";
@@ -17,6 +17,8 @@ public interface IResponseHandler {
      *
      * @param response HttpResponse object with data
      * @throws java.io.IOException if retrieving data from response fails
+     * @see org.apache.http.HttpResponse
+     * @see java.io.IOException
      */
     void sendResponseMessage(HttpResponse response) throws IOException;
 
@@ -49,6 +51,7 @@ public interface IResponseHandler {
      * @param statusCode   HTTP status code
      * @param headers      returned headers
      * @param responseBody returned data
+     * @see org.apache.http.Header
      */
     void sendSuccessMessage(int statusCode, Header[] headers, byte[] responseBody);
 
@@ -59,6 +62,8 @@ public interface IResponseHandler {
      * @param headers      returned headers
      * @param responseBody returned data
      * @param error        cause of request failure
+     * @see org.apache.http.Header
+     * @see java.lang.Throwable
      */
     void sendFailureMessage(int statusCode, Header[] headers, byte[] responseBody, Throwable error);
 
@@ -73,6 +78,7 @@ public interface IResponseHandler {
      * Returns URI which was used to request
      *
      * @return uri of origin request
+     * @see java.net.URI
      */
     public URI getRequestURI();
 
@@ -80,6 +86,7 @@ public interface IResponseHandler {
      * Returns Header[] which were used to request
      *
      * @return headers from origin request
+     * @see org.apache.http.Header
      */
     public Header[] getRequestHeaders();
 
@@ -87,6 +94,7 @@ public interface IResponseHandler {
      * Helper for handlers to receive Request URI info
      *
      * @param requestURI claimed request URI
+     * @see java.net.URI
      */
     public void setRequestURI(URI requestURI);
 
@@ -94,6 +102,7 @@ public interface IResponseHandler {
      * Helper for handlers to receive Request Header[] info
      *
      * @param requestHeaders Headers, claimed to be from original request
+     * @see org.apache.http.Header
      */
     public void setRequestHeaders(Header[] requestHeaders);
 

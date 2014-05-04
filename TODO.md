@@ -18,4 +18,4 @@ Todo:
   - Use fluent interfaces way (https://en.wikipedia.org/wiki/Fluent_interface#Java)
   - Add full HTTP protocol implementation (eg. for FULL REST API)
   - Add encoding/decoding integration (json, hessian, proto-buffers, ...)
-
+  - Use interfaces where possible, to allow simple subclassing and functions overriding
