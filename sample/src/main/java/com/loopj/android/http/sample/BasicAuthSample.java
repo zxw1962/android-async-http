@@ -28,6 +28,7 @@ public class BasicAuthSample extends SampleParentActivity {
     @Override
     public IRequestHandle executeSample(@NotNull IAsyncHttpClient client, @NotNull String URL, Header[] headers, HttpEntity entity, IResponseHandler responseHandler) {
         try {
+            client.getCredentialsProvider().clear();
             Uri uri = Uri.parse(URL);
             client.addCredentials(new AuthScope(uri.getHost(), uri.getPort()), new UsernamePasswordCredentials("username", "password"));
         } catch (Throwable t) {
