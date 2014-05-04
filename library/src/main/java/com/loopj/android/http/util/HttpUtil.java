@@ -32,7 +32,6 @@ public class HttpUtil {
     @NotNull
     public static RequestBuilder createRequestBuilder(@NotNull String method, @NotNull IAsyncHttpClientOptions options, @NotNull String url, @Nullable Header[] headers, @Nullable HttpEntity httpEntity, @Nullable IRequestParams requestParams) {
         RequestBuilder mBuilder = RequestBuilder.create(method);
-
         if (requestParams != null) {
             String paramString = requestParams.getParamString().trim();
 

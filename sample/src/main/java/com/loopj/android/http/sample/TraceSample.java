@@ -34,7 +34,7 @@ public class TraceSample extends SampleParentActivity {
 
     @Override
     public String getDefaultURL() {
-        return "http://httpbin.org/";
+        return "http://sinus.cz";
     }
 
     @Override
