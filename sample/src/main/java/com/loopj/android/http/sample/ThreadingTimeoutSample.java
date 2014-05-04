@@ -1,5 +1,6 @@
 package com.loopj.android.http.sample;
 
+import android.util.Log;
 import android.util.SparseArray;
 
 import com.loopj.android.http.handlers.AsyncHttpResponseHandler;
@@ -76,6 +77,7 @@ public class ThreadingTimeoutSample extends SampleParentActivity {
             @Override
             public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                 setStatus(id, "FAILURE");
+                Log.e(LOG_TAG, "FAILURE " + id, error);
             }
 
             @Override
