@@ -30,6 +30,7 @@
         <activity android:name=".ThreadingTimeoutSample"/>
         <activity android:name=".CancelAllRequestsSample"/>
         <activity android:name=".CancelRequestHandleSample"/>
+        <activity android:name=".BasicAuthSample"/>
         <activity android:name=".SynchronousClientSample"/>
     </application>
 

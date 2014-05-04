@@ -3,9 +3,11 @@ package com.loopj.android.http.impl;
 import com.loopj.android.http.interfaces.IAsyncHttpClientOptions;
 import com.loopj.android.http.interfaces.IConfigurationInterceptor;
 
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.DefaultConnectionReuseStrategyHC4;
+import org.apache.http.impl.client.BasicCredentialsProviderHC4;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultConnectionKeepAliveStrategyHC4;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -17,16 +19,17 @@ public class AsyncHttpClientOptions implements IAsyncHttpClientOptions {
 
     public boolean mIsSynchronous = false;
     public SSLSocketFactory mSslSocketFactory = null;
-    public boolean mIsUrlEncodingEnabled = true;
+    public IConfigurationInterceptor mConfigurationInterceptor = null;
     public String mUserAgent = null;
+    public CredentialsProvider mCredentialsProvider = new BasicCredentialsProviderHC4();
+    public boolean mIsUrlEncodingEnabled = true;
     public boolean mEnableRedirects = true;
     public boolean mEnableRelativeRedirects = true;
     public boolean mEnableCircularRedirects = true;
-    public boolean mEnableContentCompression = false;
+    public boolean mEnableContentCompression = true;
     public boolean mKeepConnectionsAlive = true;
     public int mMaxConnectionsTotal = 100;
     public int mMaxConnectionsPerRoute = 100;
-    public IConfigurationInterceptor mConfigurationInterceptor = null;
 
     public static final IAsyncHttpClientOptions DEFAULTS = new AsyncHttpClientOptions();
     public static final IAsyncHttpClientOptions SYNCHRONOUS_DEFAULTS = new AsyncHttpClientOptions().setIsSynchronous(true);
@@ -174,6 +177,19 @@ public class AsyncHttpClientOptions implements IAsyncHttpClientOptions {
 
     @NotNull
     @Override
+    public IAsyncHttpClientOptions setDefaultCredentialsProvider(@NotNull CredentialsProvider credentialsProvider) {
+        this.mCredentialsProvider = credentialsProvider;
+        return this;
+    }
+
+    @Nullable
+    @Override
+    public CredentialsProvider getDefaultCredentialsProvider() {
+        return mCredentialsProvider;
+    }
+
+    @NotNull
+    @Override
     public CloseableHttpClient buildHttpClient(@NotNull HttpClientBuilder httpClientBuilder) {
         RequestConfig.Builder defaultConfigBuilder = RequestConfig.custom();
         PoolingHttpClientConnectionManager connectionManager = new PoolingHttpClientConnectionManager();
@@ -190,6 +206,9 @@ public class AsyncHttpClientOptions implements IAsyncHttpClientOptions {
             }
             if (mKeepConnectionsAlive) {
                 httpClientBuilder.setKeepAliveStrategy(DefaultConnectionKeepAliveStrategyHC4.INSTANCE);
+            }
+            if (mCredentialsProvider != null) {
+                httpClientBuilder.setDefaultCredentialsProvider(mCredentialsProvider);
             }
             httpClientBuilder.setConnectionReuseStrategy(DefaultConnectionReuseStrategyHC4.INSTANCE);
             connectionManager.setMaxTotal(getMaxParallelConnectionsTotal());

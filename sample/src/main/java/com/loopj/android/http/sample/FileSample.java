@@ -10,6 +10,7 @@ import com.loopj.android.http.sample.util.FileUtil;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
@@ -31,6 +32,7 @@ public class FileSample extends SampleParentActivity {
         return true;
     }
 
+    @NotNull
     @Override
     public String getDefaultURL() {
         return "https://httpbin.org/robots.txt";
@@ -76,8 +78,9 @@ public class FileSample extends SampleParentActivity {
         };
     }
 
+    @NotNull
     @Override
-    public IRequestHandle executeSample(IAsyncHttpClient client, String URL, Header[] headers, HttpEntity entity, IResponseHandler responseHandler) {
+    public IRequestHandle executeSample(@NotNull IAsyncHttpClient client, @NotNull String URL, Header[] headers, HttpEntity entity, IResponseHandler responseHandler) {
         return client.get(this, URL, headers, null, responseHandler);
     }
 }

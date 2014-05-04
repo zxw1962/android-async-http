@@ -12,6 +12,7 @@ import com.loopj.android.http.interfaces.IResponseHandler;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.jetbrains.annotations.NotNull;
 
 public class SynchronousClientSample extends GetSample {
     private static final String LOG_TAG = "SyncSample";
@@ -37,13 +38,15 @@ public class SynchronousClientSample extends GetSample {
         return true;
     }
 
+    @NotNull
     @Override
     public String getDefaultURL() {
         return "https://httpbin.org/delay/6";
     }
 
+    @NotNull
     @Override
-    public IRequestHandle executeSample(final IAsyncHttpClient client, final String URL, final Header[] headers, HttpEntity entity, final IResponseHandler responseHandler) {
+    public IRequestHandle executeSample(@NotNull final IAsyncHttpClient client, @NotNull final String URL, final Header[] headers, HttpEntity entity, final IResponseHandler responseHandler) {
         if (client.isSynchronous()) {
             new Thread(new Runnable() {
                 @Override

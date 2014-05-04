@@ -4,6 +4,9 @@ import android.content.Context;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.methods.RequestBuilder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.protocol.HttpContext;
@@ -23,6 +26,11 @@ public interface IAsyncHttpClient {
 
     @NotNull
     CloseableHttpClient getHttpClient();
+
+    @Nullable
+    CredentialsProvider getCredentialsProvider();
+
+    void addCredentials(@NotNull AuthScope scope, @NotNull UsernamePasswordCredentials usernamePasswordCredentials);
 
     @NotNull
     ExecutorService getThreadPool();

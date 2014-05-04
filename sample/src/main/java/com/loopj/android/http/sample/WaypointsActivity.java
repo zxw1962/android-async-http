@@ -25,6 +25,7 @@ public class WaypointsActivity extends ListActivity {
             "THREADING TIMEOUTS",
             "CANCEL ALL REQUESTS",
             "CANCEL REQUEST HANDLE",
+            "BASIC AUTH",
             "SYNCHRONOUS CLIENT"
     };
     private static final Class[] targets = {
@@ -43,6 +44,7 @@ public class WaypointsActivity extends ListActivity {
             ThreadingTimeoutSample.class,
             CancelAllRequestsSample.class,
             CancelRequestHandleSample.class,
+            BasicAuthSample.class,
             SynchronousClientSample.class
     };
 

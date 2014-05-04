@@ -7,6 +7,8 @@ import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.impl.AsyncHttpClientOptions;
 import com.loopj.android.http.interfaces.IAsyncHttpClient;
 
+import org.jetbrains.annotations.NotNull;
+
 public class Redirect302Sample extends GetSample {
 
     private boolean enableRedirects = true;
@@ -50,6 +52,7 @@ public class Redirect302Sample extends GetSample {
         return super.onOptionsItemSelected(item);
     }
 
+    @NotNull
     @Override
     public String getDefaultURL() {
         return "http://httpbin.org/redirect/6";
@@ -60,6 +63,7 @@ public class Redirect302Sample extends GetSample {
         return R.string.title_redirect_302;
     }
 
+    @NotNull
     @Override
     public IAsyncHttpClient getAsyncHttpClient() {
         return new AsyncHttpClient(AsyncHttpClientOptions.DEFAULTS.setIsHandlingRedirects(true, true, true));

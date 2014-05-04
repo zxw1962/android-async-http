@@ -10,13 +10,15 @@ import com.loopj.android.http.sample.util.SampleJSON;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.jetbrains.annotations.NotNull;
 
 public class JsonSample extends SampleParentActivity {
 
     private static final String LOG_TAG = "JsonSample";
 
+    @NotNull
     @Override
-    public IRequestHandle executeSample(IAsyncHttpClient client, String URL, Header[] headers, HttpEntity entity, IResponseHandler responseHandler) {
+    public IRequestHandle executeSample(@NotNull IAsyncHttpClient client, @NotNull String URL, Header[] headers, HttpEntity entity, IResponseHandler responseHandler) {
         return client.get(this, URL, headers, null, responseHandler);
     }
 
@@ -35,6 +37,7 @@ public class JsonSample extends SampleParentActivity {
         return false;
     }
 
+    @NotNull
     @Override
     public String getDefaultURL() {
         return "http://httpbin.org/headers";

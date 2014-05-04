@@ -1,5 +1,6 @@
 package com.loopj.android.http.interfaces;
 
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -67,6 +68,12 @@ public interface IAsyncHttpClientOptions {
     IAsyncHttpClientOptions setMaxParallelConnectionsPerRoute(final int maxParallelConnectionsPerRoute);
 
     public int getMaxParallelConnectionsPerRoute();
+
+    @NotNull
+    IAsyncHttpClientOptions setDefaultCredentialsProvider(@NotNull CredentialsProvider credentialsProvider);
+
+    @Nullable
+    public CredentialsProvider getDefaultCredentialsProvider();
 
     @NotNull
     CloseableHttpClient buildHttpClient(@NotNull HttpClientBuilder httpClientBuilder);

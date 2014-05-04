@@ -1,48 +1,65 @@
 package com.loopj.android.http.sample;
 
 
-import com.loopj.android.http.handlers.AsyncHttpResponseHandler;
+import android.net.Uri;
+import android.os.Bundle;
+
+import com.loopj.android.http.handlers.TextHttpResponseHandler;
 import com.loopj.android.http.interfaces.IAsyncHttpClient;
 import com.loopj.android.http.interfaces.IRequestHandle;
 import com.loopj.android.http.interfaces.IResponseHandler;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.jetbrains.annotations.NotNull;
 
-public class HeadSample extends SampleParentActivity {
-    private static final String LOG_TAG = "HeadSample";
+public class BasicAuthSample extends SampleParentActivity {
+    private static final String LOG_TAG = "BasicAuthSample";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+    }
 
     @NotNull
     @Override
     public IRequestHandle executeSample(@NotNull IAsyncHttpClient client, @NotNull String URL, Header[] headers, HttpEntity entity, IResponseHandler responseHandler) {
+        try {
+            Uri uri = Uri.parse(URL);
+            client.addCredentials(new AuthScope(uri.getHost(), uri.getPort()), new UsernamePasswordCredentials("username", "password"));
+        } catch (Throwable t) {
+            debugThrowable(LOG_TAG, t);
+        }
         return client.head(this, URL, headers, null, responseHandler);
     }
 
     @Override
     public int getSampleTitle() {
-        return R.string.title_head_sample;
+        return R.string.title_basic_auth_sample;
     }
 
     @Override
     public boolean isRequestBodyAllowed() {
-        return true;
+        return false;
     }
 
     @Override
     public boolean isRequestHeadersAllowed() {
-        return true;
+        return false;
     }
 
     @NotNull
     @Override
     public String getDefaultURL() {
-        return "http://httpbin.org/";
+        return "http://httpbin.org/basic-auth/username/password";
     }
 
     @Override
     public IResponseHandler getResponseHandler() {
-        return new AsyncHttpResponseHandler() {
+        return new TextHttpResponseHandler() {
 
             @Override
             public void onStart() {
@@ -50,19 +67,18 @@ public class HeadSample extends SampleParentActivity {
             }
 
             @Override
-            public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 debugHeaders(LOG_TAG, headers);
                 debugStatusCode(LOG_TAG, statusCode);
+                debugThrowable(LOG_TAG, throwable);
+                debugResponse(LOG_TAG, responseString);
             }
 
             @Override
-            public void onFailure(int statusCode, Header[] headers, byte[] errorResponse, Throwable e) {
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
                 debugHeaders(LOG_TAG, headers);
                 debugStatusCode(LOG_TAG, statusCode);
-                debugThrowable(LOG_TAG, e);
-                if (errorResponse != null) {
-                    debugResponse(LOG_TAG, new String(errorResponse));
-                }
+                debugResponse(LOG_TAG, responseString);
             }
         };
     }

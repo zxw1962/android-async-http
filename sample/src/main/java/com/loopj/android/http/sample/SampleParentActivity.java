@@ -12,13 +12,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.impl.AsyncHttpClientOptions;
 import com.loopj.android.http.interfaces.IAsyncHttpClient;
+import com.loopj.android.http.interfaces.IAsyncHttpClientOptions;
 import com.loopj.android.http.interfaces.IRequestHandle;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.message.BasicHeader;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -30,7 +33,7 @@ import java.util.Locale;
 
 public abstract class SampleParentActivity extends Activity implements SampleInterface {
 
-    private IAsyncHttpClient asyncHttpClient = new AsyncHttpClient();
+    private IAsyncHttpClient asyncHttpClient = new AsyncHttpClient(getAsyncHttpClientOptions());
     private EditText urlEditText, headersEditText, bodyEditText;
     private LinearLayout responseLayout;
     private final List<IRequestHandle> requestHandles = new LinkedList<>();
@@ -71,6 +74,7 @@ public abstract class SampleParentActivity extends Activity implements SampleInt
         }
     }
 
+    @NotNull
     public List<IRequestHandle> getRequestHandles() {
         return requestHandles;
     }
@@ -210,12 +214,24 @@ public abstract class SampleParentActivity extends Activity implements SampleInt
         return false;
     }
 
+    @NotNull
     public IAsyncHttpClient getAsyncHttpClient() {
         return this.asyncHttpClient;
     }
 
     @Override
-    public void setAsyncHttpClient(IAsyncHttpClient client) {
+    public void setAsyncHttpClient(@NotNull IAsyncHttpClient client) {
         this.asyncHttpClient = client;
+    }
+
+    @NotNull
+    @Override
+    public IAsyncHttpClientOptions getAsyncHttpClientOptions() {
+        return new AsyncHttpClientOptions()
+                .setIsHandlingRedirects(true, true, true)
+                .setUserAgent("HttpClient/1.5.0")
+                .setURLEncodingEnabled(true)
+                .setEnableContentCompression(true)
+                .setKeepConnectionsAlive(true);
     }
 }

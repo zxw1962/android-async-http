@@ -9,12 +9,14 @@ import com.loopj.android.http.interfaces.IResponseHandler;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.jetbrains.annotations.NotNull;
 
 public class GetSample extends SampleParentActivity {
     private static final String LOG_TAG = "GetSample";
 
+    @NotNull
     @Override
-    public IRequestHandle executeSample(IAsyncHttpClient client, String URL, Header[] headers, HttpEntity entity, IResponseHandler responseHandler) {
+    public IRequestHandle executeSample(@NotNull IAsyncHttpClient client, @NotNull String URL, Header[] headers, HttpEntity entity, IResponseHandler responseHandler) {
         return client.get(this, URL, headers, null, responseHandler);
     }
 
@@ -33,6 +35,7 @@ public class GetSample extends SampleParentActivity {
         return true;
     }
 
+    @NotNull
     @Override
     public String getDefaultURL() {
         return "https://httpbin.org/get";
