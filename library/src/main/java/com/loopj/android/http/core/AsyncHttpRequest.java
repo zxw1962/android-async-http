@@ -25,6 +25,7 @@ import com.loopj.android.http.interfaces.IResponseHandler;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.protocol.HttpContext;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -36,13 +37,15 @@ public class AsyncHttpRequest implements Runnable {
     private final CloseableHttpClient client;
     private final HttpUriRequest request;
     private final IResponseHandler responseHandler;
-//    private int executionCount;
+    //    private int executionCount;
+    private HttpContext context;
     private boolean isCancelled = false;
     private boolean cancelIsNotified = false;
     private boolean isFinished = false;
 
-    public AsyncHttpRequest(CloseableHttpClient client, HttpUriRequest request, IResponseHandler responseHandler) {
+    public AsyncHttpRequest(CloseableHttpClient client, HttpContext httpContext, HttpUriRequest request, IResponseHandler responseHandler) {
         this.client = client;
+        this.context = httpContext;
         this.request = request;
         this.responseHandler = responseHandler;
     }
@@ -92,7 +95,7 @@ public class AsyncHttpRequest implements Runnable {
             throw new MalformedURLException("No valid URI scheme was provided");
         }
 
-        HttpResponse response = client.execute(request);
+        HttpResponse response = client.execute(request, context);
 
         if (!isCancelled() && responseHandler != null) {
             responseHandler.sendResponseMessage(response);

@@ -124,7 +124,7 @@ public class AsyncHttpClient extends AbstractAsyncHttpClient {
             responseHandler.setRequestHeaders(uriRequest.getAllHeaders());
         }
 
-        AsyncHttpRequest asyncRequest = new AsyncHttpRequest(getHttpClient(), uriRequest, responseHandler);
+        AsyncHttpRequest asyncRequest = new AsyncHttpRequest(getHttpClient(), getHttpContext(), uriRequest, responseHandler);
 
         if (getConfigurationOptions().isSynchronous()) {
             asyncRequest.run();

@@ -5,6 +5,9 @@ import com.loopj.android.http.interfaces.IAsyncHttpClientOptions;
 
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.protocol.BasicHttpContextHC4;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.SyncBasicHttpContext;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.ExecutorService;
@@ -20,6 +23,9 @@ public abstract class AbstractAsyncHttpClient implements IAsyncHttpClient {
 
     @NotNull
     protected IAsyncHttpClientOptions mOptions;
+
+    @NotNull
+    private HttpContext mHttpContext = new SyncBasicHttpContext(new BasicHttpContextHC4());
 
     public AbstractAsyncHttpClient(@NotNull final IAsyncHttpClientOptions asyncHttpClientOptions) {
         HttpClientBuilder mBuilder = HttpClientBuilder.create();
@@ -55,4 +61,14 @@ public abstract class AbstractAsyncHttpClient implements IAsyncHttpClient {
         return mOptions;
     }
 
+    @NotNull
+    @Override
+    public HttpContext getHttpContext() {
+        return mHttpContext;
+    }
+
+    @Override
+    public void setHttpContext(@NotNull HttpContext httpContext) {
+        this.mHttpContext = httpContext;
+    }
 }
