@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.loopj.android.http.sample">
+          package="com.loopj.android.http.sample">
 
     <uses-permission android:name="android.permission.INTERNET"/>
 
@@ -16,6 +16,10 @@
         </activity>
         <activity android:name=".GetSample"/>
         <activity android:name=".PostSample"/>
+        <activity android:name=".TraceSample"/>
+        <activity android:name=".HeadSample"/>
+        <activity android:name=".OptionsSample"/>
+        <activity android:name=".PatchSample"/>
         <activity android:name=".DeleteSample"/>
         <activity android:name=".PutSample"/>
         <activity android:name=".JsonSample"/>

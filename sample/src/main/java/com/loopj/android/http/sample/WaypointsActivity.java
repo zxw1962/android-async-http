@@ -10,10 +10,13 @@ import android.widget.ListView;
 public class WaypointsActivity extends ListActivity {
 
     private static final String[] samples = new String[]{
+            "OPTIONS",
             "GET",
+            "HEAD",
             "POST",
-            "DELETE",
             "PUT",
+            "DELETE",
+            "TRACE",
             "JSON",
             "FILE",
             "BINARY",
@@ -25,10 +28,13 @@ public class WaypointsActivity extends ListActivity {
             "SYNCHRONOUS CLIENT"
     };
     private static final Class[] targets = {
+            OptionsSample.class,
             GetSample.class,
+            HeadSample.class,
             PostSample.class,
-            DeleteSample.class,
             PutSample.class,
+            DeleteSample.class,
+            TraceSample.class,
             JsonSample.class,
             FileSample.class,
             BinarySample.class,

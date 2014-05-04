@@ -26,7 +26,7 @@ android {
         targetSdkVersion 19
         versionCode Integer.parseInt(VERSION_CODE)
         versionName VERSION_NAME
-        packageName GROUP + 'http.sample' // contains
+        packageName GROUP + '.http.sample' // contains
     }
 
     compileOptions {
