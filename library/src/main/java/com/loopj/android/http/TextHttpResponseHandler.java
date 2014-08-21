@@ -18,11 +18,12 @@
 
 package com.loopj.android.http;
 
-import android.util.Log;
+
+import java.io.IOException;
 
 import org.apache.http.Header;
-
-import java.io.UnsupportedEncodingException;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 
 /**
  * Used to intercept and handle the responses from requests made using {@link AsyncHttpClient}. The
@@ -55,7 +56,7 @@ import java.io.UnsupportedEncodingException;
  * });
  * </pre>
  */
-public abstract class TextHttpResponseHandler extends AsyncHttpResponseHandler {
+public abstract class TextHttpResponseHandler extends AsyncGenericResponseHandler<String> {
 
     private static final String LOG_TAG = "TextHttpResponseHandler";
 
@@ -84,6 +85,7 @@ public abstract class TextHttpResponseHandler extends AsyncHttpResponseHandler {
      * @param responseString string response of given charset
      * @param throwable      throwable returned when processing request
      */
+    @Override
     public abstract void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable);
 
     /**
@@ -93,35 +95,11 @@ public abstract class TextHttpResponseHandler extends AsyncHttpResponseHandler {
      * @param headers        response headers if any
      * @param responseString string response of given charset
      */
+    @Override
     public abstract void onSuccess(int statusCode, Header[] headers, String responseString);
 
     @Override
-    public void onSuccess(int statusCode, Header[] headers, byte[] responseBytes) {
-        onSuccess(statusCode, headers, getResponseString(responseBytes, getCharset()));
-    }
-
-    @Override
-    public void onFailure(int statusCode, Header[] headers, byte[] responseBytes, Throwable throwable) {
-        onFailure(statusCode, headers, getResponseString(responseBytes, getCharset()), throwable);
-    }
-
-    /**
-     * Attempts to encode response bytes as string of set encoding
-     *
-     * @param charset     charset to create string with
-     * @param stringBytes response bytes
-     * @return String of set encoding or null
-     */
-    public static String getResponseString(byte[] stringBytes, String charset) {
-        try {
-            String toReturn = (stringBytes == null) ? null : new String(stringBytes, charset);
-            if (toReturn != null && toReturn.startsWith(UTF8_BOM)) {
-                return toReturn.substring(1);
-            }
-            return toReturn;
-        } catch (UnsupportedEncodingException e) {
-            Log.e(LOG_TAG, "Encoding response into string failed", e);
-            return null;
-        }
+    public String handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
+        return getResponseString(getResponseData(response.getEntity()), getCharset());
     }
 }

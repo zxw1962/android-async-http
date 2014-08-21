@@ -23,11 +23,12 @@ import org.apache.http.HttpResponse;
 
 import java.io.IOException;
 import java.net.URI;
+import org.apache.http.client.ResponseHandler;
 
 /**
  * Interface to standardize implementations
  */
-public interface ResponseHandlerInterface {
+public interface ResponseHandlerInterface<T> extends ResponseHandler<T> {
 
     /**
      * Returns data whether request completed successfully
@@ -67,7 +68,7 @@ public interface ResponseHandlerInterface {
      * @param headers      returned headers
      * @param responseBody returned data
      */
-    void sendSuccessMessage(int statusCode, Header[] headers, byte[] responseBody);
+    void sendSuccessMessage(int statusCode, Header[] headers, T responseBody);
 
     /**
      * Returns if request was completed with error code or failure of implementation
@@ -77,7 +78,7 @@ public interface ResponseHandlerInterface {
      * @param responseBody returned data
      * @param error        cause of request failure
      */
-    void sendFailureMessage(int statusCode, Header[] headers, byte[] responseBody, Throwable error);
+    void sendFailureMessage(int statusCode, Header[] headers, T responseBody, Throwable error);
 
     /**
      * Notifies callback of retrying request
@@ -141,6 +142,8 @@ public interface ResponseHandlerInterface {
      * @param response The response to pre-processed
      */
     void onPreProcessResponse(ResponseHandlerInterface instance, HttpResponse response);
+
+    void onParseResponseDone(T responseBody);
 
     /**
      * This method is called once by the system when the request has been fully

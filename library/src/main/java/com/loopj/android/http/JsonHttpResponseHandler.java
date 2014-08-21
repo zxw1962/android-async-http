@@ -20,8 +20,11 @@ package com.loopj.android.http;
 
 import android.util.Log;
 
+import java.io.IOException;
+
 import org.apache.http.Header;
-import org.apache.http.HttpStatus;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -35,7 +38,7 @@ import org.json.JSONTokener;
  * org.apache.http.Header[], org.json.JSONObject)} methods anonymously overridden. <p>&nbsp;</p>
  * Additionally, you can override the other event methods from the parent class.
  */
-public class JsonHttpResponseHandler extends TextHttpResponseHandler {
+public class JsonHttpResponseHandler extends AsyncGenericResponseHandler<Object> {
 
     private static final String LOG_TAG = "JsonHttpResponseHandler";
 
@@ -43,7 +46,7 @@ public class JsonHttpResponseHandler extends TextHttpResponseHandler {
      * Creates new JsonHttpResponseHandler, with JSON String encoding UTF-8
      */
     public JsonHttpResponseHandler() {
-        super(DEFAULT_CHARSET);
+        this(DEFAULT_CHARSET);
     }
 
     /**
@@ -52,7 +55,8 @@ public class JsonHttpResponseHandler extends TextHttpResponseHandler {
      * @param encoding String encoding to be used when parsing JSON
      */
     public JsonHttpResponseHandler(String encoding) {
-        super(encoding);
+        super();
+        setCharset(encoding);
     }
 
     /**
@@ -77,128 +81,28 @@ public class JsonHttpResponseHandler extends TextHttpResponseHandler {
         Log.w(LOG_TAG, "onSuccess(int, Header[], JSONArray) was not overriden, but callback was received");
     }
 
-    /**
-     * Returns when request failed
-     *
-     * @param statusCode    http response status line
-     * @param headers       response headers if any
-     * @param throwable     throwable describing the way request failed
-     * @param errorResponse parsed response if any
-     */
-    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-        Log.w(LOG_TAG, "onFailure(int, Header[], Throwable, JSONObject) was not overriden, but callback was received", throwable);
-    }
-
-    /**
-     * Returns when request failed
-     *
-     * @param statusCode    http response status line
-     * @param headers       response headers if any
-     * @param throwable     throwable describing the way request failed
-     * @param errorResponse parsed response if any
-     */
-    public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONArray errorResponse) {
-        Log.w(LOG_TAG, "onFailure(int, Header[], Throwable, JSONArray) was not overriden, but callback was received", throwable);
-    }
-
     @Override
-    public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
-        Log.w(LOG_TAG, "onFailure(int, Header[], String, Throwable) was not overriden, but callback was received", throwable);
-    }
-
-    @Override
-    public void onSuccess(int statusCode, Header[] headers, String responseString) {
-        Log.w(LOG_TAG, "onSuccess(int, Header[], String) was not overriden, but callback was received");
-    }
-
-    @Override
-    public final void onSuccess(final int statusCode, final Header[] headers, final byte[] responseBytes) {
-        if (statusCode != HttpStatus.SC_NO_CONTENT) {
-            Runnable parser = new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        final Object jsonResponse = parseResponse(responseBytes);
-                        postRunnable(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (jsonResponse instanceof JSONObject) {
-                                    onSuccess(statusCode, headers, (JSONObject) jsonResponse);
-                                } else if (jsonResponse instanceof JSONArray) {
-                                    onSuccess(statusCode, headers, (JSONArray) jsonResponse);
-                                } else if (jsonResponse instanceof String) {
-                                    onFailure(statusCode, headers, (String) jsonResponse, new JSONException("Response cannot be parsed as JSON data"));
-                                } else {
-                                    onFailure(statusCode, headers, new JSONException("Unexpected response type " + jsonResponse.getClass().getName()), (JSONObject) null);
-                                }
-
-                            }
-                        });
-                    } catch (final JSONException ex) {
-                        postRunnable(new Runnable() {
-                            @Override
-                            public void run() {
-                                onFailure(statusCode, headers, ex, (JSONObject) null);
-                            }
-                        });
-                    }
-                }
-            };
-            if (!getUseSynchronousMode()) {
-                new Thread(parser).start();
-            } else {
-                // In synchronous mode everything should be run on one thread
-                parser.run();
-            }
+    public final void onSuccess(int statusCode, Header[] headers, Object response) {
+        if (response instanceof JSONObject) {
+            onSuccess(statusCode, headers, (JSONObject) response);
+        } else if (response instanceof JSONArray) {
+            onSuccess(statusCode, headers, (JSONArray) response);
         } else {
-            onSuccess(statusCode, headers, new JSONObject());
+            onFailure(statusCode, headers, response, new JSONException("Response cannot be parsed as JSON data"));
         }
     }
 
+    /**
+     * Calls when request failed
+     *
+     * @param statusCode http response status line
+     * @param headers    response headers if any
+     * @param response   parsed response if any
+     * @param error      details failed error
+     */
     @Override
-    public final void onFailure(final int statusCode, final Header[] headers, final byte[] responseBytes, final Throwable throwable) {
-        if (responseBytes != null) {
-            Runnable parser = new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        final Object jsonResponse = parseResponse(responseBytes);
-                        postRunnable(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (jsonResponse instanceof JSONObject) {
-                                    onFailure(statusCode, headers, throwable, (JSONObject) jsonResponse);
-                                } else if (jsonResponse instanceof JSONArray) {
-                                    onFailure(statusCode, headers, throwable, (JSONArray) jsonResponse);
-                                } else if (jsonResponse instanceof String) {
-                                    onFailure(statusCode, headers, (String) jsonResponse, throwable);
-                                } else {
-                                    onFailure(statusCode, headers, new JSONException("Unexpected response type " + jsonResponse.getClass().getName()), (JSONObject) null);
-                                }
-                            }
-                        });
-
-                    } catch (final JSONException ex) {
-                        postRunnable(new Runnable() {
-                            @Override
-                            public void run() {
-                                onFailure(statusCode, headers, ex, (JSONObject) null);
-                            }
-                        });
-
-                    }
-                }
-            };
-            if (!getUseSynchronousMode()) {
-                new Thread(parser).start();
-            } else {
-                // In synchronous mode everything should be run on one thread
-                parser.run();
-            }
-        } else {
-            Log.v(LOG_TAG, "response body is null, calling onFailure(Throwable, JSONObject)");
-            onFailure(statusCode, headers, throwable, (JSONObject) null);
-        }
+    public void onFailure(int statusCode, Header[] headers, Object response, Throwable error) {
+        Log.w(LOG_TAG, "onFailure(int, Header[], Object, Throwable) was not overriden, but callback was received", error);
     }
 
     /**
@@ -213,7 +117,8 @@ public class JsonHttpResponseHandler extends TextHttpResponseHandler {
         if (null == responseBody)
             return null;
         Object result = null;
-        //trim the string to prevent start with blank, and test if the string is valid JSON, because the parser don't do this :(. If JSON is not valid this will return null
+        // trim the string to prevent start with blank, and test if the string is valid JSON, because the
+        // parser don't do this :(. If JSON is not valid this will return null
         String jsonString = getResponseString(responseBody, getCharset());
         if (jsonString != null) {
             jsonString = jsonString.trim();
@@ -228,5 +133,15 @@ public class JsonHttpResponseHandler extends TextHttpResponseHandler {
             result = jsonString;
         }
         return result;
+    }
+
+    @Override
+    public Object handleResponse(HttpResponse response) throws ClientProtocolException, IOException {
+        try {
+            return parseResponse(getResponseData(response.getEntity()));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
