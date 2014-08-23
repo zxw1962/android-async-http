@@ -186,8 +186,19 @@ public abstract class AsyncGenericResponseHandler<T> implements ResponseHandlerI
     }
 
     @Override
-    public void onPostProcessResponse(ResponseHandlerInterface instance, HttpResponse response) {
+    public void onPostProcessResponse(int statusCode, T responseBody) {
         // default action is to do nothing...
+        if (isSuccessfulResponse(statusCode)) {
+            doXXXWithResponseBody();
+        }
+    }
+
+    protected boolean isSuccessfulResponse(int statusCode) {
+        return statusCode < 300;
+    }
+
+    protected void doXXXWithResponseBody() {
+        // default do nothing...
     }
 
     /**
@@ -349,11 +360,12 @@ public abstract class AsyncGenericResponseHandler<T> implements ResponseHandlerI
     }
 
     @Override
-    public void sendResponseMessage(HttpResponse response) throws IOException {
+    public T sendResponseMessage(HttpResponse response) throws IOException {
         // do not process if request has been cancelled
+        T responseBody = null;
         if (!Thread.currentThread().isInterrupted()) {
             StatusLine status = response.getStatusLine();
-            T responseBody = handleResponse(response);
+            responseBody = handleResponse(response);
             // additional cancellation check as getResponseData() can take non-zero time to process
             if (!Thread.currentThread().isInterrupted()) {
                 if (status.getStatusCode() >= 300) {
@@ -361,15 +373,10 @@ public abstract class AsyncGenericResponseHandler<T> implements ResponseHandlerI
                             new HttpResponseException(status.getStatusCode(), status.getReasonPhrase()));
                 } else {
                     sendSuccessMessage(status.getStatusCode(), response.getAllHeaders(), responseBody);
-                    onParseResponseDone(responseBody);
                 }
             }
         }
-    }
-
-    @Override
-    public void onParseResponseDone(T responseBody) {
-        // default do nothing...
+        return responseBody;
     }
 
     /**

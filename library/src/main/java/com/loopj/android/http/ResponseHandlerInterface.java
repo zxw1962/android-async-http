@@ -36,7 +36,7 @@ public interface ResponseHandlerInterface<T> extends ResponseHandler<T> {
      * @param response HttpResponse object with data
      * @throws java.io.IOException if retrieving data from response fails
      */
-    void sendResponseMessage(HttpResponse response) throws IOException;
+    T sendResponseMessage(HttpResponse response) throws IOException;
 
     /**
      * Notifies callback, that request started execution
@@ -143,8 +143,6 @@ public interface ResponseHandlerInterface<T> extends ResponseHandler<T> {
      */
     void onPreProcessResponse(ResponseHandlerInterface instance, HttpResponse response);
 
-    void onParseResponseDone(T responseBody);
-
     /**
      * This method is called once by the system when the request has been fully
      * sent, handled and finished. The library makes sure that a single response
@@ -157,5 +155,5 @@ public interface ResponseHandlerInterface<T> extends ResponseHandler<T> {
      * @param instance An instance of this response object
      * @param response The response to post-process
      */
-    void onPostProcessResponse(ResponseHandlerInterface instance, HttpResponse response);
+    void onPostProcessResponse(int statusCode, T responseBody);
 }

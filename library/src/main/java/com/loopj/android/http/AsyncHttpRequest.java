@@ -155,14 +155,14 @@ public class AsyncHttpRequest implements Runnable {
         }
 
         // The response is ready, handle it.
-        responseHandler.sendResponseMessage(response);
+        Object responseBody = responseHandler.sendResponseMessage(response);
 
         if (isCancelled()) {
             return;
         }
 
         // Carry out post-processing for this response.
-        responseHandler.onPostProcessResponse(responseHandler, response);
+        responseHandler.onPostProcessResponse(response.getStatusLine().getStatusCode(), responseBody);
     }
 
     private void makeRequestWithRetries() throws IOException {
